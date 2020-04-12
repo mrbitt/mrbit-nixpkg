@@ -60,6 +60,7 @@ commonPaths = [
     };
     xdiskusage = pkgs.callPackage ./xdiskusage {};
     tinyproxy = pkgs.callPackage ./tinyproxy {};
+    rtl8822bu = pkgs.callPackage ./rtl8822bu { inherit (pkgs.linuxPackages) kernel; };
 
     get_iplayer = lib.overrideDerivation pkgs.get_iplayer (a: rec {
        version = "3.01";

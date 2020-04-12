@@ -28,6 +28,7 @@ Comprising
 Quick start (clobbers any previously installed packages in the profile)
 
 $ cd $HOME
+$ git clone https://github.com/NixOS/nixpkgs
 $ git clone git@github.com:mrbitt/mrbit-nixpkg .nixpkgs
 $ nix-env -r -iA nixpkgs.desktop
 
