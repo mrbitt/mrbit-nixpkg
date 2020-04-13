@@ -9,7 +9,7 @@ let linuxPaths = [
   mupdf
   tcpdump
   usbutils
-  vimNox
+  nano
   xorg.xcursorthemes
   wireshark
   xterm
@@ -23,7 +23,7 @@ let linuxPaths = [
 ];
 darwinPaths = [];
 commonPaths = [
-  nix-repl
+  nix
   git
   bind
   binutils
