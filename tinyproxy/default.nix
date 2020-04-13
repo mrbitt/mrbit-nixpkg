@@ -29,4 +29,12 @@ stdenv.mkDerivation rec {
     substituteInPlace Makefile.in \
       --replace @A2X@ "@A2X@ -L"
   '';
+
+ meta = with stdenv.lib; {
+    homepage = "https://tinyproxy.github.io/";
+    description = "A light-weight HTTP/HTTPS proxy daemon for POSIX operating systems";
+    license = licenses.gpl2;
+    platforms = platforms.all;
+    maintainers = [ maintainers.carlosdagos ];
+  };
 }
