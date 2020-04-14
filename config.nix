@@ -49,7 +49,6 @@ commonPaths = [
   # git = {
   #   svnSupport = true;
   # };
-
   packageOverrides = pkgs: rec {
     desktop = buildEnv {
       name = "desktop";
@@ -58,9 +57,15 @@ commonPaths = [
       (stdenv.lib.optionals stdenv.isDarwin darwinPaths) ++
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
+    gkrellAclock = pkgs.callPackage ./gkrellAclock { inherit (pkgs.gkrellm); };
+    gkleds = pkgs.callPackage ./gkleds { inherit (pkgs.gkrellm); };
     xdiskusage = pkgs.callPackage ./xdiskusage {};
     tinyproxy = pkgs.callPackage ./tinyproxy {};
-    rtl8822bu = pkgs.callPackage ./rtl8822bu { inherit (pkgs.linuxPackages) kernel; };
+    rtl8822bu = pkgs.callPackage ./rtl8822bu { inherit (pkgs.linuxPackages_latest) kernel; };
+
+  linuxPackages = linuxPackages_5_4;
+  linux = linuxPackages.kernel;
+  linuxPackages_5_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_4);
 
     get_iplayer = lib.overrideDerivation pkgs.get_iplayer (a: rec {
        version = "3.01";
