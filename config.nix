@@ -57,6 +57,7 @@ commonPaths = [
       (stdenv.lib.optionals stdenv.isDarwin darwinPaths) ++
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
+    gkrellm-volume = pkgs.callPackage ./gkrellm-volume { inherit (pkgs.gkrellm); };
     gkrellmoon = pkgs.callPackage ./gkrellmoon { inherit (pkgs.gkrellm); };
     gkrellAclock = pkgs.callPackage ./gkrellAclock { inherit (pkgs.gkrellm); };
     gkleds = pkgs.callPackage ./gkleds { inherit (pkgs.gkrellm); };
