@@ -19,5 +19,5 @@ stdenv.mkDerivation rec {
                       chmod a+x "$out/bin/gkrellaclock"
                       substituteAll "${./gkrellaclockOFF.sh}" "$out/bin/gkrellaclockOFF"
                       chmod a+x "$out/bin/gkrellaclockOFF" '';
-      postInstall = '' $out/bin/gkrellaclocki '';
+      postInstall = '' $out/bin/gkrellaclock '';
 }
