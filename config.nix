@@ -67,9 +67,9 @@ commonPaths = [
     tinyproxy = pkgs.callPackage ./tinyproxy {};
     rtl8822bu = pkgs.callPackage ./rtl8822bu { inherit (pkgs.linuxPackages_latest) kernel; };
 
-  linuxPackages = linuxPackages_5_4;
-  linux = linuxPackages.kernel;
-  linuxPackages_5_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_4);
+  #linuxPackages = linuxPackages_5_4;
+  #linux = linuxPackages.kernel;
+  #linuxPackages_5_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_4);
 
     get_iplayer = lib.overrideDerivation pkgs.get_iplayer (a: rec {
        version = "3.01";

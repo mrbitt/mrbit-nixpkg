@@ -8,8 +8,6 @@ stdenv.mkDerivation rec {
     sha256 = "0liq0x25bdx927l5hciwa7rmz04fdnhl9y298jgcmwc0kl2n4ad1";
   };
 
-    #patches = [./gkrellmoon-0.6-makefile.patch];
-
     buildInputs = [ pkgconfig gkrellm gtk2 glib ];
     dontConfigure = true;
     buildPhase = '' make clean
