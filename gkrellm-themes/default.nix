@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
        rm -f Crux_chaos.tar.gz egan-gkrellm.tar.gz
 
        # Unpack the tarballs, omitting trash
-      mkdir -p $out/usr/share/gkrellm2/themes
+      mkdir -p $out/usr/share/gkrellm2/themes $out/bin
       for file in *gz ; do
         tar zxC "$out/usr/share/gkrellm2/themes" -f $file \
        --exclude CVS \
@@ -35,13 +35,10 @@ stdenv.mkDerivation rec {
        --no-same-owner \
        --no-same-permissions
       done
-
-       # Several directories in the tarballs are 777 and files 755, some SGID.
-       # The tar extract options should have fixed this, let's be 100% sure.
-    cd "$out/usr/share/gkrellm2/themes"
-    find . -type d -print0 | xargs -0 chmod 0755
-    find . -type f -print0 | xargs -0 chmod 0644
-
+      substituteAll "${./gkrellthemes.sh}" "$out/bin/gkrellthemes"
+                      chmod a+x "$out/bin/gkrellthemes"
+                      substituteAll "${./gkrellthemesOFF.sh}" "$out/bin/gkrellthemesOFF"
+                      chmod a+x "$out/bin/gkrellthemesOFF"
     # Random fixes
    cd "$out/usr/share/gkrellm2/themes/twilite"
    rm -f './.png' && ln -s 'green/frame_right.png' './.png'
