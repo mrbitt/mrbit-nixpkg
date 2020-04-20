@@ -12,7 +12,12 @@ stdenv.mkDerivation rec {
     dontConfigure = true;
     buildPhase = '' make clean
                     make'';
-    installPhase = '' mkdir -p $out/usr/local/lib/gkrellm2/plugins
-                      cp *.so $out/usr/local/lib/gkrellm2/plugins
-                      strip --strip-unneeded $out/usr/local/lib/gkrellm2/plugins/*.so '';
+    installPhase = ''
+                      mkdir -p $out/gkrellm2/plugins/ $out/bin
+                      cp *.so $out/gkrellm2/plugins/
+                      substituteAll "${./gkrellmoon.sh}" "$out/bin/gkrellmoon"
+                      chmod a+x "$out/bin/gkrellmoon"
+                      substituteAll "${./gkrellmoonOFF.sh}" "$out/bin/gkrellmoonOFF"
+                      chmod a+x "$out/bin/gkrellmoonOFF"
+                      strip --strip-all $out/gkrellm2/plugins/*.so '';
 }
