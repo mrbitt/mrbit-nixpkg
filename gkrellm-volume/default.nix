@@ -14,7 +14,12 @@ stdenv.mkDerivation rec {
     #dontConfigure = true;
     buildPhase = '' make clean
                     make enable_alsa=1 '';
-    installPhase = '' mkdir -p $out/usr/local/lib/gkrellm2/plugins
-                      cp *.so $out/usr/local/lib/gkrellm2/plugins
-                      strip --strip-unneeded $out/usr/local/lib/gkrellm2/plugins/*.so '';
+    installPhase = ''
+                      mkdir -p $out/gkrellm2/plugins/ $out/bin
+                      cp *.so $out/gkrellm2/plugins/
+                      substituteAll "${./gkrellvolume.sh}" "$out/bin/gkrellvolume"
+                      chmod a+x "$out/bin/gkrellvolume"
+                      substituteAll "${./gkrellvolumeOFF.sh}" "$out/bin/gkrellvolumeOFF"
+                      chmod a+x "$out/bin/gkrellvolumeOFF"
+                      strip --strip-unneeded $out/gkrellm2/plugins/*.so '';
 }
