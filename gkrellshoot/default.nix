@@ -1,4 +1,4 @@
-{stdenv, fetchurl, gkrellm, glib, pkgconfig, gtk2, alsaLib }:
+{stdenv, fetchurl, gkrellm, glib, pkgconfig, gtk2, imagemagick }:
 
 stdenv.mkDerivation rec {
   pname = "gkrellshoot";
@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
     sha256 = "0r61gf3glb2al3l1r34yajxyqc6kkgyayfyxxzvpd3nd025gzh8w";
   };
 
-    buildInputs = [ pkgconfig gkrellm gtk2 glib alsaLib ];
+    buildInputs = [ pkgconfig gkrellm gtk2 glib imagemagick ];
     #dontConfigure = true;
     buildPhase = '' make clean
                     make '';
