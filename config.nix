@@ -57,6 +57,8 @@ commonPaths = [
       (stdenv.lib.optionals stdenv.isDarwin darwinPaths) ++
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
+
+    a2048-qt = libsForQt5.callPackage ./a2048-qt {};
     gkrellm-xkb = pkgs.callPackage ./gkrellm-xkb { inherit (pkgs.gkrellm); };
     gkrellshoot = pkgs.callPackage ./gkrellshoot { inherit (pkgs.gkrellm); };
     gkrellm-countdown = pkgs.callPackage ./gkrellm-countdown { inherit (pkgs.gkrellm); };
@@ -67,7 +69,7 @@ commonPaths = [
     gkleds = pkgs.callPackage ./gkleds { inherit (pkgs.gkrellm); };
     xdiskusage = pkgs.callPackage ./xdiskusage {};
     tinyproxy = pkgs.callPackage ./tinyproxy {};
-    rtl8822bu = pkgs.callPackage ./rtl8822bu { inherit (pkgs.linuxPackages_latest) kernel; };
+    rtl8822bu = pkgs.callPackage ./rtl8822bu { inherit (pkgs.linuxPackages_5_4) kernel; };
 
   #linuxPackages = linuxPackages_5_4;
   #linux = linuxPackages.kernel;
