@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, yad, inxi, makeDesktopItem }:
+{ stdenv, fetchurl, yad, glib, inxi, makeDesktopItem }:
 
 stdenv.mkDerivation rec {
   pname = "inxi-gui";
@@ -8,13 +8,6 @@ stdenv.mkDerivation rec {
     url = "https://dllb2.pling.com/api/files/download/j/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjE1NTcwNjQzMDAiLCJ1IjpudWxsLCJsdCI6ImRvd25sb2FkIiwicyI6IjEyYTc5OWQxZWVmZjQzZDQzYzU3ZWNkYzhkZjk1YjhkM2NmNThmZDBjYmQ3OTE4ZWU3MmFmYjg4N2JmNTQ0Y2JhOWY2MDdmZWRhYTEzZWRhMTkyYTg0ZTE1ZmJiOGIzOWJjODFmOGIwOGY3MTU0ODJmNjc3ZDUxNzg0ZGI2OGZjIiwidCI6MTU4ODMzOTI2Nywic3RmcCI6IjkyMWY3MTI0YjU2MDIzMzRhYzY2NDQwNWFhNzY0Zjc2Iiwic3RpcCI6IjEwOS4xMTQuOTguNjYifQ.wdqxfqO3RqNFgMLUdsz0Th4v6HLxMwKL54CrkEY7bjc/${pname}/${version}.tar.xz";
     sha256 = "11srjzv10vhwf41d73ypgrqs8srgyayqa639lb8z0i7cjcz9p140";
   };
-
- # Patches = ''
-  #  substituteInPlace Makefile --replace "DESTDIR=%build" "#"
- #   substituteInPlace Makefile --replace "$(DESTDIR)/usr" "DESTDIR=$(out)"
-  #  '';
-    postPatch = '' sed -i -e 's^/DESTDIR=%build^#^' Makefile
-                   sed -i -e 's^(DESTDIR)/usr^'DESTDIR='$(out)^' Makefile '';
 
   dontConfigure = true;
   dontBuild = true;
@@ -40,7 +33,9 @@ stdenv.mkDerivation rec {
 
     for f in $out/bin/${pname} ; do
       substituteInPlace $f --replace "/usr/share" "$out/share"
+      substituteInPlace $f --replace "svg!About" "svg!"
     done
+      substituteInPlace $out/share/applications/'Inxi Gui'.desktop --replace "Categories=GTK;" "Categories="
   '';
 
   meta = with stdenv.lib; {
