@@ -7,9 +7,9 @@ let
     desktopName = pname;
     name = pname;
     exec = "${pname}";
-    icon = "$out/share/icons/gentoo/pname.png";
+    icon = "${pname}";
     terminal = "False";
-    comment = "The Dark Mod - stealth FPS inspired by the Thief series";
+    comment = "Lightweight graphical file manager for Unix-like systems, using GTK3";
     type = "Application";
     categories = "System;FileTools;FileManager;";
     genericName = pname;
@@ -45,10 +45,8 @@ stdenv.mkDerivation rec {
 
     mkdir -p "$out/share/applications"
     install -Dm644 ${desktop}/share/applications/${pname}.desktop $out/share/applications/${pname}.desktop
-
-    #mv -v "$out/share/libexec/treesheets.desktop" "$out/share/applications"
-    #substituteInPlace "$out/share/applications/treesheets.desktop" \
-    #  --replace "Icon=images/treesheets.svg" "Icon=$out/share/libexec/images/treesheets.svg"
+    mkdir -p $out/share/pixmaps
+    cp $out/share/icons/gentoo/${pname}.png $out/share/pixmaps/${pname}.png
   '';
 
   meta = with stdenv.lib; {
