@@ -57,6 +57,7 @@ commonPaths = [
       (stdenv.lib.optionals stdenv.isDarwin darwinPaths) ++
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
+    ukopp2 = pkgs.callPackage ./ukopp2 {};
     inxi-gui = pkgs.callPackage ./inxi-gui { inherit (pkgs.inxi); };
     gentoo = pkgs.callPackage ./gentoo {};
     a2048-qt = libsForQt5.callPackage ./a2048-qt {};
