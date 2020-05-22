@@ -57,6 +57,15 @@ commonPaths = [
       (stdenv.lib.optionals stdenv.isDarwin darwinPaths) ++
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
+    qt-fsarchiver = libsForQt5.callPackage ./qt-fsarchiver { };
+    braceexpand = python3Packages.callPackage ./development/python-modules/braceexpand {};
+    superpaper = pkgs.callPackage ./applications/misc/superpaper { };
+    cairo-dock-core = pkgs.callPackage ./applications/misc/cairo-dock-core { };
+	  cairo-dock-plugins = pkgs.callPackage ./applications/misc/cairo-dock-plugins { };
+	  shlib = python3Packages.callPackage ./development/python-modules/shlib {};
+    quantiphy = python3Packages.callPackage ./development/python-modules/quantiphy {};
+    inform = python3Packages.callPackage ./development/python-modules/inform {};
+    emborg = pkgs.callPackage ./emborg {};
     ukopp2 = pkgs.callPackage ./ukopp2 {};
     inxi-gui = pkgs.callPackage ./inxi-gui { inherit (pkgs.inxi); };
     gentoo = pkgs.callPackage ./gentoo {};
@@ -69,6 +78,7 @@ commonPaths = [
     gkrellmoon = pkgs.callPackage ./gkrellmoon { inherit (pkgs.gkrellm); };
     gkrellAclock = pkgs.callPackage ./gkrellAclock { inherit (pkgs.gkrellm); };
     gkleds = pkgs.callPackage ./gkleds { inherit (pkgs.gkrellm); };
+	gkrellm2 = pkgs.callPackage ./gkrellm2 {};
     xdiskusage = pkgs.callPackage ./xdiskusage {};
     tinyproxy = pkgs.callPackage ./tinyproxy {};
     rtl8822bu = pkgs.callPackage ./rtl8822bu { inherit (pkgs.linuxPackages_5_4) kernel; };
