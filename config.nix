@@ -76,6 +76,7 @@ commonPaths = [
     gkrellm-themes = pkgs.callPackage ./gkrellm-themes { inherit (pkgs.gkrellm); };
     gkrellm-volume = pkgs.callPackage ./gkrellm-volume { inherit (pkgs.gkrellm); };
     gkrellmoon = pkgs.callPackage ./gkrellmoon { inherit (pkgs.gkrellm); };
+    gkrelltop = pkgs.callPackage ./gkrelltop { inherit (pkgs.gkrellm); };
     gkrellAclock = pkgs.callPackage ./gkrellAclock { inherit (pkgs.gkrellm); };
     gkleds = pkgs.callPackage ./gkleds { inherit (pkgs.gkrellm); };
 	gkrellm2 = pkgs.callPackage ./gkrellm2 {};
