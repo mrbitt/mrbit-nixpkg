@@ -1,4 +1,4 @@
-{ stdenv, lib, borgbackup, python3Packages, inform, quantiphy, shlib, fetchurl, python-setup-hook }:
+{ stdenv, lib, borgbackup, python3Packages, inform, quantiphy, shlib, fetchurl, python-setup-hook, braceexpand }:
 
 python3Packages.buildPythonApplication rec {
   pname = "emborg";
@@ -10,7 +10,7 @@ python3Packages.buildPythonApplication rec {
   };
 
   doCheck = false;
-   propagatedBuildInputs = with python3Packages; [ appdirs arrow docopt inform quantiphy shlib ];
+   propagatedBuildInputs = with python3Packages; [ appdirs arrow docopt inform quantiphy shlib braceexpand ];
 
     # This enables accessing modules stored in cwd
   #makeWrapperArgs = ["--prefix PYTHONPATH . :"];
