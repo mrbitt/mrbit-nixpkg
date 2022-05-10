@@ -1,54 +1,4 @@
-with import <nixpkgs> {};
-let linuxPaths = [
-#  xfce4_powerman
-  acpi
-  cdrkit
-  firefox
-  gimp
-  mplayer
-  mupdf
-  tcpdump
-  usbutils
-  nano
-  xorg.xcursorthemes
-  wireshark
-  xterm
-  xorg.xwd
-  imagemagick
-  python27Packages.docker_compose
-  powertop
-  inkscape
-  xdiskusage
-  inetutils
-];
-darwinPaths = [];
-commonPaths = [
-  nix
-  git
-  bind
-  binutils
-  emacs
-  file
-  gnumake
-  gnupg
-  iftop
-  jq
-  manpages
-  mosh
-  nmap
-  pass
-  python
-  python27Packages.pip
-  tmux
-  units
-  unzip
-  vlc
-];
-  in
-{
-  # git = {
-  #   svnSupport = true;
-  # };
+
   packageOverrides = pkgs: rec {
     desktop = buildEnv {
       name = "desktop";
@@ -71,7 +21,7 @@ commonPaths = [
     ukopp2 = pkgs.callPackage ./ukopp2 {};
     inxi-gui = pkgs.callPackage ./inxi-gui { inherit (pkgs.inxi); };
     gentoo = pkgs.callPackage ./gentoo {};
-    a2048-qt = libsForQt5.callPackage ./a2048-qt {};
+    a2048-qt = libsForQt5.callPackage ./a2048-qt { };
     gkrellm-xkb = pkgs.callPackage ./gkrellm-xkb { inherit (pkgs.gkrellm); };
     gkrellshoot = pkgs.callPackage ./gkrellshoot { inherit (pkgs.gkrellm); };
     gkrellm-countdown = pkgs.callPackage ./gkrellm-countdown { inherit (pkgs.gkrellm); };
@@ -81,11 +31,14 @@ commonPaths = [
     gkrelltop = pkgs.callPackage ./gkrelltop { inherit (pkgs.gkrellm); };
     gkrellAclock = pkgs.callPackage ./gkrellAclock { inherit (pkgs.gkrellm); };
     gkleds = pkgs.callPackage ./gkleds { inherit (pkgs.gkrellm); };
-	gkrellm2 = pkgs.callPackage ./gkrellm2 {};
+    gkrellm-hdplop = pkgs.callPackage ./gkrellm-hdplop { inherit (pkgs.gkrellm); };
+    gkrellm2 = pkgs.callPackage ./gkrellm2 {};
     xdiskusage = pkgs.callPackage ./xdiskusage {};
     tinyproxy = pkgs.callPackage ./tinyproxy {};
-    rtl8822bu = pkgs.callPackage ./rtl8822bu { inherit (pkgs.linuxPackages_5_4 ) kernel; };
-
+    #rtl8822bu = pkgs.callPackage ./rtl8822bu { inherit (pkgs.linuxPackages ) kernel ; };
+    #curabylonger = libsForQt5.callPackage ./applications/misc/curabylonger { };
+    #pynest2d = python3Packages.callPackage ../development/python-modules/pynest2d { };
+    
   #linuxPackages = linuxPackages_5_4;
   #linux = linuxPackages.kernel;
   #linuxPackages_5_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_4);
