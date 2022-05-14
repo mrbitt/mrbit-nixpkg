@@ -8,10 +8,8 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
-    tkdiff = callPackage ../tools/text/dirdiff {
-    tcl = tcl-8_5;
-    tk = tk-8_5;
-      };
+    gtkhash = pkgs.callPackage ./gtkhash {};
+    tkdiff = callPackage ../tools/text/dirdiff { tcl = tcl-8_5; tk = tk-8_5; };
     qt-fsarchiver = libsForQt5.callPackage ./qt-fsarchiver { };
     braceexpand = python3Packages.callPackage ./development/python-modules/braceexpand {};
     superpaper = pkgs.callPackage ./applications/misc/superpaper { };
