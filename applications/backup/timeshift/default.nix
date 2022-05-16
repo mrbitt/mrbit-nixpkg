@@ -1,35 +1,34 @@
-{stdenv, fetchurl, makeWrapper, bash, vala, gtk3, libsoup, desktop-file-utils, diffutils, coreutils, vte, json-glib, libgee, rsync }:
+{lib, stdenv, fetchurl, makeWrapper, bash, vala, pkg-config, gtk3, libsoup, which, desktop-file-utils, diffutils, psmisc, cron, coreutils, util-linux, vte, json-glib, libgee, rsync }:
 
 stdenv.mkDerivation rec {
   pname = "timeshift";
-  version = "20.03";
+  version = "21.09.1";
   src = fetchurl {
     url = "https://github.com/teejee2008/${pname}/archive/v${version}.tar.gz";
-    sha256 = "14dk6n9v2xl0j5l66i29b41i17frhmp449gzj306jgpwh421a5k5";
+    sha256 = "0pa5ghvrivpvz0vns407hf74qq8i1yc6nx2g4rh4ha4w8dai7ckh";
   };
 
-    nativeBuildInputs = [ vala diffutils coreutils vte];
-    buildInputs = [ makeWrapper gtk3 ];
+    nativeBuildInputs = [ makeWrapper pkg-config vala diffutils coreutils vte];
+    buildInputs = [ which makeWrapper gtk3 libgee json-glib ];
     dontConfigure = true;
-
-  #makeFlags = [
-   # "PREFIX=$(out)"
-    #"ICONDIR=$(out)/share/pixmaps" ];
-
- # some hardcodeism
- patchPhase = ''
-    for f in $(find src/ -type f); do
-      substituteInPlace $f --replace "/bin/bash" "${bash}/bin/bash"
-    done '';
-
-  buildPhase = '' cd ./src
+    enableParallelBuilding = true;
+     
+  postPatch = '' substituteInPlace src/makefile --replace "SHELL=/bin/bash" "SHELL=${bash}/bin/bash" 
+                 substituteInPlace src/makefile --replace '/usr/bin' '$(out)/bin'
+                 substituteInPlace src/share/polkit-1/actions/in.teejeetech.pkexec.timeshift.policy --replace '/usr' $out'/' 
+                 substituteInPlace src/Utility/Device.vala  --replace /sbin/blkid ${util-linux}/sbin/blkid 
+                 substituteInPlace src/Core/Main.vala  --replace /sbin/blkid ${util-linux}/sbin/blkid  '';
+                  
+                  
+   buildPhase = '' cd ./src
+            make clean 
             make '';
-  #postInstall = ''
-  #  mkdir -p $out/share/pixmaps
-  #  rmdir "$out/share/appdata"
-  #  substituteInPlace "$out/share/applications/$pname.desktop" --replace "/usr/share/$pname/icons/" "" '';
+            
+   installFlags = [
+    "DESTDIR=${placeholder "out"}"
+  ];
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "A system restore utility for Linux";
     license = licenses.gpl3;
     homepage = "https://github.com/teejee2008/timeshift";
