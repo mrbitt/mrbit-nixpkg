@@ -10,6 +10,7 @@
     
     gtkhash = pkgs.callPackage ./gtkhash {};
     tkdiff = callPackage ../tools/text/dirdiff { tcl = tcl-8_5; tk = tk-8_5; };
+    qwinff = libsForQt5.callPackage ./qwinff { };
     qt-fsarchiver = libsForQt5.callPackage ./qt-fsarchiver { };
     braceexpand = python3Packages.callPackage ./development/python-modules/braceexpand {};
     superpaper = pkgs.callPackage ./applications/misc/superpaper { };
