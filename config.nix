@@ -25,6 +25,7 @@
     ukopp2 = pkgs.callPackage ./ukopp2 {};
     inxi-gui = pkgs.callPackage ./inxi-gui { inherit (pkgs.inxi); };
     gentoo = pkgs.callPackage ./gentoo {};
+    gnome-commander = pkgs.callPackage ./gnome-commander {};
     a2048-qt = libsForQt5.callPackage ./a2048-qt { };
     gkrellm-xkb = pkgs.callPackage ./gkrellm-xkb { inherit (pkgs.gkrellm); };
     gkrellshoot = pkgs.callPackage ./gkrellshoot { inherit (pkgs.gkrellm); };
