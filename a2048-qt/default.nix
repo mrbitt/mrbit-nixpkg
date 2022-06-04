@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, qtbase, qttools, qtdeclarative, qtquickcontrols, qmake, qt5, mkDerivation}:
+{ lib, stdenv, fetchurl, qtbase, qttools, qtdeclarative, qtquickcontrols, qmake, qt5, mkDerivation}:
 
 mkDerivation  rec{
   pname = "2048-qt";
@@ -33,7 +33,7 @@ mkDerivation  rec{
   '';
   #enableParallelBuilding = false;
     # dontStrip = true;
-  meta = with stdenv.lib;{
+  meta = with lib;{
     description = "The 2048 number game implemented in Qt";
     homepage = "https://github.com/xiaoyong/2048-Qt";
     license = licenses.mit;

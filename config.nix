@@ -7,7 +7,7 @@
       (stdenv.lib.optionals stdenv.isDarwin darwinPaths) ++
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
-    
+    wcmucommander = callPackage ../applications/misc/wcmcommander { };
     gtkhash = pkgs.callPackage ./gtkhash {};
     tkdiff = callPackage ../tools/text/dirdiff { tcl = tcl-8_5; tk = tk-8_5; };
     qwinff = libsForQt5.callPackage ./qwinff { };

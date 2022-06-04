@@ -73,6 +73,9 @@ preFixup = ''
    #  gappsWrapperArgs+=(--prefix XDG_DATA_DIRS : "$out/share/gsettings-schemas/${pname}-${version}")
    #  makeWrapperArgs+=("''${gappsWrapperArgs[@]}")
    '';
+   
+    dontWrapQtApps = true;
+   
 postInstall = ''
     rm -f $out/lib/${pname}/*.la $out/lib/${pname}/plugins/*.la 
        '';
