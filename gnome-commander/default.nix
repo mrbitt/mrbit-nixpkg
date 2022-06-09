@@ -1,4 +1,5 @@
-{ stdenv
+{ stdenv 
+, ccacheStdenv
 , lib
 , fetchurl
 , python3
@@ -22,8 +23,9 @@
 , shared-mime-info
 , gtk2
 }:
-
-stdenv.mkDerivation rec {
+ 
+ #ccacheStdenv.mkDerivation {
+ stdenv.mkDerivation rec {
   pname = "gnome-commander";
   version = "1.14.2";
 
@@ -31,6 +33,12 @@ stdenv.mkDerivation rec {
     url ="https://download.gnome.org/sources/${pname}/1.14/${pname}-${version}.tar.xz";
     sha256 = "E3jv0k+K8YoJAx2D2Rj5Zio/Xrpab535/FWHDy5vDuk=";
   };
+
+   preConfigure = ''
+    export CCACHE_DIR=/nix/var/cache/ccache
+    export CCACHE_UMASK=007
+  '';
+
 
 postPatch = '' substituteInPlace data/org.gnome.gnome-commander.gschema.xml --replace  '/usr/local' $out'/'
              for f in doc/{C/${pname},cs/${pname},de/${pname},el/${pname},es/${pname},fr/${pname},ru/${pname},sl/${pname},sv/${pname}}*.xml;do

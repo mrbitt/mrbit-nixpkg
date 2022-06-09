@@ -7,6 +7,7 @@
       (stdenv.lib.optionals stdenv.isDarwin darwinPaths) ++
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
+    
     wcmucommander = callPackage ../applications/misc/wcmcommander { };
     gtkhash = pkgs.callPackage ./gtkhash {};
     tkdiff = callPackage ../tools/text/dirdiff { tcl = tcl-8_5; tk = tk-8_5; };
@@ -22,7 +23,7 @@
     quantiphy = python3Packages.callPackage ./development/python-modules/quantiphy {};
     inform = python3Packages.callPackage ./development/python-modules/inform {};
     emborg = pkgs.callPackage ./emborg {};
-    ukopp2 = pkgs.callPackage ./ukopp2 {};
+    backwild = pkgs.callPackage ./backwild {};
     inxi-gui = pkgs.callPackage ./inxi-gui { inherit (pkgs.inxi); };
     gentoo = pkgs.callPackage ./gentoo {};
     gnome-commander = pkgs.callPackage ./gnome-commander {};
