@@ -1,24 +1,23 @@
-{ stdenv, lib, buildPythonPackage, python3Packages, pytestrunner, requests-mock, pytest, pytestcov, fetchPypi, setuptools }:
+{ lib, buildPythonPackage, fetchPypi, pytestCheckHook, arrow, six, hypothesis, pytest, pytest-cov }:
 
 buildPythonPackage rec {
   pname = "inform";
-  version = "1.20.0";
+  version = "1.26.0";
 
   src = fetchPypi {
     inherit pname version;
     extension = "tar.gz";
-    sha256 = "ad4d767f029d7e48f19383a628d1daaf78cccf5453056e1ff0a6d69ea4d7d37d";
+    sha256 = "sha256-fVgAtVb0VKG3XGBNYhq84KPhzdQ6kDjo4U85qCEdfoI=";
   };
-
-   checkInputs = [ pytest  pytestrunner requests-mock pytestcov ];
-   propagatedBuildInputs = with python3Packages; [ six arrow ];
 
    postPatch = ''
     # Is in setup_requires but not used in setup.py...
-    substituteInPlace setup.py --replace "'pytest-runner'" ""
+    substituteInPlace setup.py --replace "pytest-runner>=2.0" ""
   '';
-
-  meta = with stdenv.lib; {
+  
+  propagatedBuildInputs = [ six arrow pytest-cov hypothesis pytest ];
+  
+  meta = with lib; {
     description = "Print and logging utilities for communicating with user";
     homepage    = "https://github.com/KenKundert/inform";
     license     = licenses.gpl3;
