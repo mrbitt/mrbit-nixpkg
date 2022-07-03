@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    xpenguins = callPackage ./games/xpenguins {};
     simpleclock = callPackage ./tools/misc/simpleclock {};
     perseus = callPackage ./applications/science/math/perseus {};
     plots = callPackage ./applications/misc/plots { };
