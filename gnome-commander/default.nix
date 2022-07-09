@@ -27,11 +27,11 @@
  #ccacheStdenv.mkDerivation {
  stdenv.mkDerivation rec {
   pname = "gnome-commander";
-  version = "1.14.2";
+  version = "1.14.3";
 
   src = fetchurl {
     url ="https://download.gnome.org/sources/${pname}/1.14/${pname}-${version}.tar.xz";
-    sha256 = "E3jv0k+K8YoJAx2D2Rj5Zio/Xrpab535/FWHDy5vDuk=";
+    sha256 = "sha256-eNjc5w+5IrKQnPdneDBTsIESE6TWpJs4dVEM86hO/Xs=sha256-eNjc5w+5IrKQnPdneDBTsIESE6TWpJs4dVEM86hO/Xs=";
   };
 
    preConfigure = ''
