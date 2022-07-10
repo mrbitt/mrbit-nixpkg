@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    vokoscreen-ng = libsForQt5.callPackage ./applications/video/vokoscreen-ng {inherit (gst_all_1) gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-plugins-ugly;};
     gitkraken = callPackage ./applications/version-management/gitkraken { };
     xpenguins = callPackage ./games/xpenguins {};
     simpleclock = callPackage ./tools/misc/simpleclock {};
