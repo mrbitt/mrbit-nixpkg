@@ -18,25 +18,26 @@ stdenv.mkDerivation rec {
   dontConfigure = true;
   dontBuild = true;
 
+nativeBuildInputs = [ copyDesktopItems ];
+
 installPhase = ''
-    mkdir -p $out/bin
+    mkdir -p $out/bin $out/share/applications $out/share/pixmaps
     cp tkdiff $out/bin
     chmod +x $out/bin/tkdiff
+     install -Dm644 "${./tkdiff.png}" "$out/share/pixmaps/tkdiff.png"
+  runHook postInstall
       '';
 
-# desktopItems = [
-#    (makeDesktopItem {
-#      name = "tkdiff";
-#      exec = "tkdiff";
-#      desktopName = "tkdiff";
-#      genericName = "Generic diff program";
-#      comment =  meta.description;
-#      categories = [ "Development" ];
-#    })
-#  ];
+ desktopItems = [ (makeDesktopItem {
+    name = "tkdiff";
+    exec = "tkdiff";
+    icon = "tkdiff";
+    desktopName = "tkdiff";
+    comment     = meta.description;
+    categories  = [ "Development" ];
+  }) ];
 
-
-  meta = with lib; {
+ meta = with lib; {
     description = "A graphical front end to the diff program";
     homepage    = "http://tkdiff.sourceforge.net/";
     platforms   = platforms.all;
