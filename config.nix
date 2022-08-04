@@ -8,6 +8,9 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    theide = callPackage ./applications/editors/theide { };
+    libguytools2 = libsForQt5.callPackage ./development/libraries/libguytools2 {};
+    guymager = libsForQt5.callPackage ./applications/misc/guymager {};
     vokoscreen-ng = libsForQt5.callPackage ./applications/video/vokoscreen-ng {inherit (gst_all_1) gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-plugins-ugly;};
     gitkraken = callPackage ./applications/version-management/gitkraken { };
     xpenguins = callPackage ./games/xpenguins {};
