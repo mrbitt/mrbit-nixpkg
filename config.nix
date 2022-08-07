@@ -10,7 +10,7 @@
     
     theide = callPackage ./applications/editors/theide { };
     libguytools2 = libsForQt5.callPackage ./development/libraries/libguytools2 {};
-    guymager = libsForQt5.callPackage ./applications/misc/guymager {};
+    guymager = libsForQt5.callPackage ./applications/misc/guymager {inherit libguytools2;};
     vokoscreen-ng = libsForQt5.callPackage ./applications/video/vokoscreen-ng {inherit (gst_all_1) gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-plugins-ugly;};
     gitkraken = callPackage ./applications/version-management/gitkraken { };
     xpenguins = callPackage ./games/xpenguins {};

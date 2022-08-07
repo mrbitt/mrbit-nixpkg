@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, qtbase, qttools, qtdeclarative, qtquickcontrols, qmake, qt5, polkit, hdparm, smartmontools, parted, mkDerivation}:
+{ lib, stdenv, fetchurl, libguytools2, qtbase, qttools, qtdeclarative, qtquickcontrols, qmake, qt5, polkit, hdparm, smartmontools, parted, mkDerivation}:
 
 mkDerivation  rec{
   pname = "guymager";
@@ -11,7 +11,7 @@ mkDerivation  rec{
 
   nativeBuildInputs = [ qmake ];
 
-  buildInputs = [ qtbase qttools qtquickcontrols qtdeclarative hdparm smartmontools parted polkit ];
+  buildInputs = [ qtbase qttools qtquickcontrols qtdeclarative hdparm smartmontools parted polkit libguytools2 ];
   
   enableParallelBuilding = false;
     # dontStrip = true;
