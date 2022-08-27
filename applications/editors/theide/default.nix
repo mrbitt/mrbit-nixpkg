@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
-    sha256 = "sha256-cZMK/Pe6Umfxldf8Ck22ALpY8fk5wrh72j8PQxNyQZI=";
+    sha256 = "sha256-O40iCWXVquJXYeycF8s6pU/r6TDX9kdmhcdvGtTediU=";
   };
 
   postPatch = ''

@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    wike = callPackage ./applications/misc/wike { };
     theide = callPackage ./applications/editors/theide { };
     libguytools2 = libsForQt5.callPackage ./development/libraries/libguytools2 {};
     guymager = libsForQt5.callPackage ./applications/misc/guymager {inherit libguytools2;};
