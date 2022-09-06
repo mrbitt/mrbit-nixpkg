@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    wxhexeditor = callPackage ./applications/editors/wxhexeditor { };
     wike = callPackage ./applications/misc/wike { };
     theide = callPackage ./applications/editors/theide { };
     libguytools2 = libsForQt5.callPackage ./development/libraries/libguytools2 {};

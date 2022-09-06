@@ -1,20 +1,21 @@
-{stdenv, fetchurl, gkrellm, glib, gtk2, libX11, libXtst, pkgconfig, imlib2, }:
+{lib, stdenv, fetchurl, gkrellm, glib, gtk2, libX11, libXtst, pkg-config, imlib2 }:
 
 stdenv.mkDerivation rec {
   pname = "wmhdplop";
-  version = "0.9.11";
+  version = "0.9.12";
   src = fetchurl {
     url = "https://www.dockapps.net/download/${pname}-${version}.tar.gz";
-    sha256 = "1dsm870rglgsqh2wg5k7hqxykjnx36wrakxfnzm7npjzpwmhsagq";
+    sha256 = "sha256-ZgYx6ObIm3FXovSFJYrQ0yOhSPm0pwSQObl7xEIL25o=";
   };
-
        # patches = [./wmhdplop-0.9.10-sysmacros.patch];
-       #  patches = [./wmhdplop-0.9.10-cflags.patch];
-
-    buildInputs = [ pkgconfig gkrellm glib gtk2 libX11 libXtst imlib2];
-    configureFlags = [ "--libdir=$(out)/gkrellm2/plugins" ];
+       # patches = [./wmhdplop-0.9.10-cflags.patch];
     
-    postPatch = '' sed -e '/gkhdplop_so_LDFLAGS/s, -Wl , ,' -i Makefile.in '';
+    nativeBuildInputs = [ pkg-config ];
+    buildInputs = [ imlib2 gkrellm glib gtk2 libX11 libXtst ];
+   
+   #configureFlags = [ "--prefix=${placeholder "out"}" "--libdir=$(out)/gkrellm2/plugins" "--enable-gkrellm" ];
+    
+   #postPatch = '' sed -e '/gkhdplop_so_LDFLAGS/s, -Wl , ,' -i Makefile.in '';
 
 
     installPhase = ''
@@ -25,4 +26,15 @@ stdenv.mkDerivation rec {
                       substituteAll "${./gkrellm-hdplopOFF.sh}" "$out/bin/gkrellm-hdplopOFF"
                       chmod a+x "$out/bin/gkrellm-hdplopOFF"
                       strip --strip-all $out/gkrellm2/plugins/*.so '';
+
+ enableParallelBuilding = true;
+  
+ meta = with lib; {
+    description = "Monitors your hard drives and displays visual information about their activity (read, write, swapin, swapout), 
+                     and optionally (if hddtemp is running as a daemon), displays their temperature/status. ";
+    homepage = "https://www.dockapps.net/wmhdplop";
+    maintainers = [  ];
+    platforms = platforms.linux;
+    license = licenses.gpl2;
+  };
 }
