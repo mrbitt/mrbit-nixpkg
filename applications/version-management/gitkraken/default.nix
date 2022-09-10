@@ -10,14 +10,14 @@ with lib;
 
 let
   pname = "gitkraken";
-  version = "8.8.0";
+  version = "8.9.0";
 
   throwSystem = throw "Unsupported system: ${stdenv.hostPlatform.system}";
 
   srcs = {
     x86_64-linux = fetchzip {
       url = "https://release.axocdn.com/linux/GitKraken-v${version}.tar.gz";
-      sha256 = "sha256-F/uqV6CL/zFERS6nKVD8kEqCZQ2O9AGGzU5uCJ94qwk=";
+      sha256 = "sha256-gycP/KCfy+FecIcNyITpOuEEeByoB8S9pKGrhpUs7sc=";
     };
 
     x86_64-darwin = fetchzip {
