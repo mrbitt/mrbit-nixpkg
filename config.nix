@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    qownnotes = libsForQt5.callPackage ./applications/office/qownnotes { };
     wxhexeditor = callPackage ./applications/editors/wxhexeditor { };
     wike = callPackage ./applications/misc/wike { };
     theide = callPackage ./applications/editors/theide { };
