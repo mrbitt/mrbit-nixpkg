@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, qmake, qttools, qtbase, qtsvg, qtdeclarative, qtxmlpatterns, qtwebsockets, qtx11extras, qtwayland }:
+{ lib, mkDerivation, stdenv, fetchurl, qmake, qttools, qtbase, qtsvg, qtdeclarative, qtxmlpatterns, qtwebsockets, qtx11extras, qtwayland }:
 
 stdenv.mkDerivation rec {
   pname = "qownnotes";
@@ -15,7 +15,7 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ qtbase qtsvg qtdeclarative qtxmlpatterns qtwebsockets qtx11extras ]
     ++ lib.optionals stdenv.isLinux [ qtwayland ];
-
+    
   meta = with lib; {
     description = "Plain-text file notepad and todo-list manager with markdown support and Nextcloud/ownCloud integration.";
     longDescription = "QOwnNotes is a plain-text file notepad and todo-list manager with markdown support and Nextcloud/ownCloud integration.";
