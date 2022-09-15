@@ -5,8 +5,8 @@ stdenv.mkDerivation rec {
   version = "1";
 
   src = fetchgit {
-     url = "https://git.ologantr.xyz/r/simple-clock.git";
-    sha256 = "sha256-PRd8G9clzu25+RAwUIarR18ze2k5hXkXqP/zLZWnlpo=";
+     url = "https://git.ologantr.xyz/simple-clock";
+    sha256 = "sha256-yOvwjx1sxrkGl8l2wPd2OsyTOLeBkXCPn9li9L46iac=";
   };
 
   
