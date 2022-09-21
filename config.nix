@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    textpieces = callPackage ./tools/misc/textpieces {};
     converseen = libsForQt5.callPackage ./applications/graphics/converseen { };
     krita = libsForQt5.callPackage ./applications/graphics/krita { };
     notepadqq = libsForQt5.callPackage ./applications/editors/notepadqq { };
