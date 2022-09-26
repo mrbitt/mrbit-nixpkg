@@ -8,6 +8,8 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    hurrican = callPackage ./games/hurrican {};
+    app-icon-preview = callPackage ./tools/misc/app-icon-preview {};
     textpieces = callPackage ./tools/misc/textpieces {};
     converseen = libsForQt5.callPackage ./applications/graphics/converseen { };
     krita = libsForQt5.callPackage ./applications/graphics/krita { };
