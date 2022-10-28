@@ -6,12 +6,12 @@ with lib;
 
 stdenv.mkDerivation rec {
   name = "upp";
-  version = "16487";
+  version = "16519";
   pname = "upp";
 
   src = fetchurl {
     url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
-    sha256 = "sha256-ieEVRpYpJL9xFbY6RTYJM9vQj8MNccgjkCGPIpGNbHE=";
+    sha256 = "sha256-Iu66Q4xxZ+VbVgGOdKk8juxfscmUuhlxgyZ8KKwdzlc=";
   };
 
   postPatch = ''
