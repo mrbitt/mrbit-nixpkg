@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    zutty = callPackage ./applications/terminal-emulators/zutty { fontmiscmisc = xorg.fontmiscmisc; };
     tauon = callPackage ./applications/audio/tauon { };
     hurrican = callPackage ./games/hurrican {};
     app-icon-preview = callPackage ./tools/misc/app-icon-preview {};

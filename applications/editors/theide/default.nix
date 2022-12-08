@@ -1,17 +1,17 @@
 { lib, stdenv, fetchurl, pkg-config, zlib, libnotify, openssl, gtk3
-, clang, gdb, bzip2, wxGTK31-gtk3, autoconf, coreutils, xorg, wrapGAppsHook
+, clang, gdb, bzip2, wxGTK31, autoconf, coreutils, xorg, wrapGAppsHook
 }:
 
 with lib;
 
 stdenv.mkDerivation rec {
   name = "upp";
-  version = "16558";
+  version = "16598";
   pname = "upp";
 
   src = fetchurl {
     url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
-    sha256 = "sha256-dR5s6o6FVkvp0ajDq0zdE5g0YiRoircnRmTOTwR5sdQ=";
+    sha256 = "sha256-0UoAT7bdZSYXdUswD2DVsp1tifIn0zIYGVJN9Y8yq8c=";
   };
 
   postPatch = ''
@@ -30,7 +30,7 @@ stdenv.mkDerivation rec {
   '';
 
   nativeBuildInputs = [ autoconf pkg-config clang wrapGAppsHook ];
-  buildInputs = [ xorg.libXdmcp wxGTK31-gtk3 gtk3 openssl libnotify];
+  buildInputs = [ xorg.libXdmcp wxGTK31 gtk3 openssl libnotify];
 
   makeFlags = ["prefix=$(out)"
               "DATA_PATH=$(prefix)/share/${pname}"
