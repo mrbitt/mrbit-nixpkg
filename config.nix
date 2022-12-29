@@ -8,6 +8,8 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    newsflash = callPackage ./applications/networking/feedreaders/newsflash {webkitgtk = webkitgtk_5_0;};
+    netbeans = callPackage ./applications/editors/netbeans {jdk = jdk17;};
     zutty = callPackage ./applications/terminal-emulators/zutty { fontmiscmisc = xorg.fontmiscmisc; };
     tauon = callPackage ./applications/audio/tauon { };
     hurrican = callPackage ./games/hurrican {};
