@@ -7,20 +7,15 @@
 , itstool
 , libunique
 , gettext
-, samba
 , yelp-tools
 , gsettings-desktop-schemas
-, appstream-glib
-, desktop-file-utils
 , gexiv2
-, gtest
 , pkg-config
 , gobject-introspection
 , flex
-, meson
-, ninja
+, autoreconfHook
 , makeWrapper
-, wrapGAppsHook4
+, wrapGAppsHook
 , exiv2
 , libgsf
 , poppler
@@ -32,11 +27,11 @@
  #ccacheStdenv.mkDerivation {
  stdenv.mkDerivation rec {
   pname = "gnome-commander";
-  version = "1.16.0";
+  version = "1.14.3";
 
   src = fetchurl {
-    url ="https://download.gnome.org/sources/${pname}/1.16/${pname}-${version}.tar.xz";
-    sha256 = "sha256-2ArHC5mnBZyPKMoL83MF8J2urs/OsVKNaKQ1rOno7F0=";
+    url ="https://download.gnome.org/sources/${pname}/1.14/${pname}-${version}.tar.xz";
+    sha256 = "sha256-eNjc5w+5IrKQnPdneDBTsIESE6TWpJs4dVEM86hO/Xs=";
   };
 
    preConfigure = ''
@@ -59,15 +54,14 @@ postPatch = '' substituteInPlace data/org.gnome.gnome-commander.gschema.xml --re
     gtk2
     gobject-introspection
     makeWrapper
-    wrapGAppsHook4
-    meson ninja samba gtest desktop-file-utils appstream-glib
+    wrapGAppsHook
+    autoreconfHook
   ];
 
   buildInputs = [
     yelp-tools
     gsettings-desktop-schemas
     gettext
-    libunique
     glib
     libgsf
     poppler

@@ -12,13 +12,13 @@
 
 stdenv.mkDerivation rec {
   pname = "zutty";
-  version = "0.13";
+  version = "0.14";
 
   src = fetchFromGitHub {
     owner = "tomszilagyi";
     repo = pname;
     rev = version;
-    hash = "sha256-1eB5GDhWGwyhiKzxpepzjQ44Co0ZeL9JJI5ppPE1TJw=";
+    hash = "sha256-b/q7hIi/U/GkKo+MIFX2wWnHZAy5rQGXNul3I1pxo1Q=";
   };
 
   nativeBuildInputs = [
