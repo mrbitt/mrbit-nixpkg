@@ -8,17 +8,21 @@
 , cmake
 , extra-cmake-modules
 , pkg-config
-#, qt5
+#, qt5compat
 , qtbase
 , qttools
 , wrapQtAppsHook
+, makeWrapper
 , gettext
 , libxcb
 , libxkbcommon
+, lsb-release
 
 }:
 
-stdenv.mkDerivation rec{
+let inherit (lib) getDev; in
+
+ stdenv.mkDerivation rec{
   pname = "converseen";
   version = "0.9.11.1";
 
@@ -27,7 +31,7 @@ stdenv.mkDerivation rec{
     sha256 = "sha256-hVEa7SZEp+h/W8vmDLw+3L3PuyxLuUFt+Tm6hK0xpQM=";
   };
   
-  doCheck = false;  
+  #doCheck = false;  
     # FIXME: checks must be disabled because they are lacking the qt env.
     #        They fail like this, even if built and wrapped with all Qt and
     #        runtime dependencies:
@@ -35,37 +39,30 @@ stdenv.mkDerivation rec{
     #     running install tests
     #     qt.qpa.plugin: Could not find the Qt platform plugin "xcb" in ""
     #     This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
-  dontWrapQtApps = true;
+  #dontWrapQtApps = true;
   
    postPatch = ''
     substituteInPlace converseen.pro --replace /usr "$out"
+    substituteInPlace converseen.pro --replace '$$[QT_INSTALL_BINS]/lrelease' '${getDev qttools}/bin/lrelease'
     '';
  
-   #qmakeFlags = [ "CONFIG+=release" "PREFIX=${placeholder "out"}" "INCLUDEPATH+=${imagemagick.dev}/include/ImageMagick"];
-cmakeFlags = [
-    "-DDVERSION=${version}"
-    "-DBUILD_EXAMPLES=OFF"
-    "-DBUILD_DOCS=ON"
-    "-DCMAKE_INSTALL_LIBDIR=lib"
-    "-DCMAKE_INSTALL_INCLUDEDIR=include"
-   ];
-  
-  preConfigure = ''
-    # qt.qpa.plugin: Could not find the Qt platform plugin "minimal"
-    # A workaround is to set QT_PLUGIN_PATH explicitly
-    export QT_PLUGIN_PATH=${qtbase.bin}/${qtbase.qtPluginPrefix}
+ preConfigure = ''
+    export LRELEASE="lrelease"
   '';
+ 
+   qmakeFlags = [ "CONFIG+=release" "PREFIX=${placeholder "out"}" "INCLUDEPATH+=${imagemagick.dev}/include/ImageMagick"];
   
-  nativeBuildInputs = [
+ nativeBuildInputs = [
    imagemagick
- # qmake
-   cmake
+   qmake
+ #  qt5compat
    extra-cmake-modules
    qttools
-    pkg-config
+   pkg-config
    wrapQtAppsHook
    gettext
-  ];
+   lsb-release
+  ]++ lib.optionals stdenv.isDarwin [ makeWrapper ];
     
   buildInputs = [
     qtbase

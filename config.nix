@@ -18,7 +18,7 @@
     converseen = libsForQt5.callPackage ./applications/graphics/converseen { };
     krita = libsForQt5.callPackage ./applications/graphics/krita { };
     notepadqq = libsForQt5.callPackage ./applications/editors/notepadqq { };
-    qownnotes = libsForQt5.callPackage ./applications/office/qownnotes { };
+    qownnotes = qt6Packages.callPackage ./applications/office/qownnotes {stdenv = if stdenv.isDarwin then darwin.apple_sdk_11_0.stdenv else stdenv; };
     wxhexeditor = callPackage ./applications/editors/wxhexeditor { };
     wike = callPackage ./applications/misc/wike { };
     theide = callPackage ./applications/editors/theide { };
