@@ -1,4 +1,4 @@
-{ lib, stdenv, libXcomposite, libgnome-keyring, makeWrapper, udev,  alsa-lib
+{ lib, stdenv, libXcomposite, libgnome-keyring, makeWrapper, udev, curlWithGnuTls, alsa-lib
 , libXfixes, atk, gtk3, libXrender, pango, gnome, cairo, freetype, fontconfig
 , libX11, libXi, libxcb, libXext, libXcursor, glib, libXScrnSaver, libxkbfile, libXtst
 , nss, nspr, cups, fetchzip, expat, gdk-pixbuf, libXdamage, libXrandr, dbus
@@ -10,14 +10,14 @@ with lib;
 
 let
   pname = "gitkraken";
-  version = "8.9.1";
+  version = "9.4.0";
 
   throwSystem = throw "Unsupported system: ${stdenv.hostPlatform.system}";
 
   srcs = {
     x86_64-linux = fetchzip {
       url = "https://release.axocdn.com/linux/GitKraken-v${version}.tar.gz";
-      sha256 = "sha256-taz610BIAZm8TB2GQSHLjcDLVjfvtcyLqJ2XBaD6NRE=";
+      sha256 = "sha256-b2ntm5Yja806JZEmcrLi1CSsDRmBot85LPy39Zn7ULw=";
     };
 
     x86_64-darwin = fetchzip {
@@ -50,7 +50,7 @@ let
 
     libPath = makeLibraryPath [
       stdenv.cc.cc.lib
-      #curlWithGnuTls
+      curlWithGnuTls
       udev
       libX11
       libXext

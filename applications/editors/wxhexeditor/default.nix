@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchFromGitHub, fetchpatch, wxGTK30, autoconf, automake, libtool, python, gettext }:
+{ lib, stdenv, fetchFromGitHub, fetchpatch, wxGTK32, autoconf, automake, libtool, python3, gettext }:
 
 stdenv.mkDerivation rec {
   pname = "wxHexEditor";
@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
     sha256 = "08xnhaif8syv1fa0k6lc3jm7yg2k50b02lyds8w0jyzh4xi5crqj";
   };
 
-  buildInputs = [ wxGTK30 autoconf automake libtool python gettext ];
+  buildInputs = [ wxGTK32 autoconf automake libtool python3 gettext ];
 
   preConfigure = "patchShebangs .";
     # NIX_CFLAGS_COMPILE = [ "-std=c++14" ];  

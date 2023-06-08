@@ -29,7 +29,7 @@ mkDerivation rec {
     wrapQtApp $out/bin/notepadqq
   '';
   
-  enableParallelBuilding = true;
+  #enableParallelBuilding = true;   desable x bugs 
 
   meta = with lib; {
     homepage = "https://notepadqq.com/";

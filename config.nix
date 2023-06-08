@@ -52,6 +52,7 @@
     a2048-qt = libsForQt5.callPackage ./a2048-qt { };
     gkrellm-xkb = pkgs.callPackage ./gkrellm-xkb { inherit (pkgs.gkrellm); };
     gkrellshoot = pkgs.callPackage ./gkrellshoot { inherit (pkgs.gkrellm); };
+    gkrellm-thinkbat = pkgs.callPackage ./gkrellm-thinkbat { inherit (pkgs.gkrellm); };
     gkrellm-countdown = pkgs.callPackage ./gkrellm-countdown { inherit (pkgs.gkrellm); };
     gkrellm-themes = pkgs.callPackage ./gkrellm-themes { inherit (pkgs.gkrellm); };
     gkrellm-volume = pkgs.callPackage ./gkrellm-volume { inherit (pkgs.gkrellm); };

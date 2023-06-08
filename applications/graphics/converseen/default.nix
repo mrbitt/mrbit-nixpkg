@@ -4,11 +4,10 @@
 , gtk3
 , glib
 , imagemagick
-, qmake
+
 , cmake
 , extra-cmake-modules
 , pkg-config
-#, qt5compat
 , qtbase
 , qttools
 , wrapQtAppsHook
@@ -50,12 +49,12 @@ let inherit (lib) getDev; in
     export LRELEASE="lrelease"
   '';
  
-   qmakeFlags = [ "CONFIG+=release" "PREFIX=${placeholder "out"}" "INCLUDEPATH+=${imagemagick.dev}/include/ImageMagick"];
+   #qmakeFlags = [ "CONFIG+=release" "PREFIX=${placeholder "out"}" "INCLUDEPATH+=${imagemagick.dev}/include/ImageMagick"];
+   makeFlags = [ "PREFIX=$(out)" "LOCALEDIR=$(out)/share/locale" ];
   
  nativeBuildInputs = [
    imagemagick
-   qmake
- #  qt5compat
+   cmake 
    extra-cmake-modules
    qttools
    pkg-config
@@ -71,7 +70,14 @@ let inherit (lib) getDev; in
     libxcb
     libxkbcommon
  ];
-  
+    
+    preInstall = ''
+       mkdir -p $out/share/applications
+       mkdir -p $out/share/pixmaps
+      ls -l 
+      #cp -r "res/converseen.png" $out/share/pixmaps/converseen.png
+      '';
+    
    meta = with lib; {
     description = " is a free cross-platform batch image processor that allows you to convert";
     homepage = "https://converseen.fasterland.net/";
