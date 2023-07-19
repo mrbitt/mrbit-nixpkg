@@ -9,6 +9,7 @@
 , python3
 , pkg-config
 , ninja
+, libportal-gtk4
 , libgee
 , meson
 , gtksourceview5
@@ -25,15 +26,16 @@
 
 stdenv.mkDerivation rec {
   pname = "textpieces";
-  version = "3.2.0";
+  version = "3.4.1";
 
   src = fetchurl {
     url = "https://github.com/liferooter/textpieces/archive/refs/tags/v${version}.tar.gz";
-    sha256 = "sha256-aUNBeDwK3P9eU1sE6RZgzOVCenqrqnynzTGfvODBIqw=";
+    sha256 = "sha256-o5SM17p7eGf1G/VAY93snxVJ3earciGZjVQ+n+SQsyE=";
   };
 
   nativeBuildInputs = [
     libgee 
+    libportal-gtk4
     json-glib
     desktop-file-utils # For update-desktop-database
     gobject-introspection
