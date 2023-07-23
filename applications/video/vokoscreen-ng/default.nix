@@ -19,14 +19,14 @@
 mkDerivation rec {
 
   pname = "vokoscreen-ng";
-  version = "3.5.0";
+  version = "3.7.0";
 
   src = fetchurl {
        url = "https://github.com/vkohaupt/vokoscreenNG/archive/refs/tags/${version}.tar.gz";
      #owner = "vkohaupt";
      #repo = "vokoscreenNG";
      #rev = version;
-    sha256 = "sha256-PgMrmr412eG/8vzaE12BJK5fX7U4gNHTyVpEbbmeo4k=";
+    sha256 = "sha256-fvt9nVjP1CzJh6KBhkbp55QEOasG925BPJjmjsHCUd0=";
   };
 
  qmakeFlags = [ "src/vokoscreenNG.pro" "DESTDIR=${placeholder "out"}/bin" ];
