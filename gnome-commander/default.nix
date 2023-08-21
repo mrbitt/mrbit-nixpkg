@@ -32,11 +32,11 @@
  #ccacheStdenv.mkDerivation {
  stdenv.mkDerivation rec {
   pname = "gnome-commander";
-  version = "1.16.0";
+  version = "1.16.1";
 
   src = fetchurl {
     url ="https://download.gnome.org/sources/${pname}/1.16/${pname}-${version}.tar.xz";
-    sha256 = "sha256-2ArHC5mnBZyPKMoL83MF8J2urs/OsVKNaKQ1rOno7F0=";
+    sha256 = "sha256-Px0AxKZQ/nkCFnZIKGsyycpO+G4xpdjMygE58S0Q0LM=";
   };
 
    preConfigure = ''
