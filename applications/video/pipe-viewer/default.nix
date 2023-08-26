@@ -70,6 +70,10 @@ buildPerlModule rec {
 
   dontWrapGApps = true;
   postFixup = ''
+     mkdir -p $out/share/{applications,pixmaps}
+     install "$src"/share/gtk-pipe-viewer.desktop $out/share/applications/gtk-pipe-viewer.desktop
+     install "$src"/share/icons/gtk-pipe-viewer.png $out/share/pixmaps/gtk-pipe-viewer.png
+     
     wrapProgram "$out/bin/pipe-viewer" \
       --prefix PATH : "${lib.makeBinPath [ ffmpeg wget youtube-dl yt-dlp ]}"
   '' + lib.optionalString withGtk3 ''
