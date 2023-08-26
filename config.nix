@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    gtk-pipe-viewer = perlPackages.callPackage ../applications/video/pipe-viewer { withGtk3 = true; };
     newsflash = callPackage ./applications/networking/feedreaders/newsflash {webkitgtk = webkitgtk_5_0;};
     netbeans = callPackage ./applications/editors/netbeans {jdk = jdk17;};
     zutty = callPackage ./applications/terminal-emulators/zutty { fontmiscmisc = xorg.fontmiscmisc; };
