@@ -30,7 +30,6 @@
     xpenguins = callPackage ./games/xpenguins {};
     simpleclock = callPackage ./tools/misc/simpleclock {};
     perseus = callPackage ./applications/science/math/perseus {};
-    plots = callPackage ./applications/misc/plots { };
     wcmucommander = callPackage ./applications/misc/wcmcommander { };
     gtkhash = pkgs.callPackage ./gtkhash {};
     tkdiff = callPackage ./tkdiff { tcl = tcl-8_5; tk = tk-8_5; };

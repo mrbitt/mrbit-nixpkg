@@ -1,9 +1,12 @@
 { lib
 , stdenv
 , rustPlatform
+, cargo
+, rustc
 , fetchFromGitLab
 , meson
 , ninja
+, cmake
 , pkg-config
 , wrapGAppsHook4
 , gdk-pixbuf
@@ -17,23 +20,28 @@
 , glib-networking
 , librsvg
 , gst_all_1
+, gitUpdater
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "newsflash";
-  version = "2.2.3";
+  version = "2.3.1";
 
   src = fetchFromGitLab {
     owner = "news-flash";
     repo = "news_flash_gtk";
     rev = "refs/tags/v.${finalAttrs.version}";
-    sha256 = "sha256-QEfbuTJ0spp0g/XPoS0ZaqudSkWZtXMd3ZTzAHiv45Q=";
+    sha256 = "sha256-JUAlDc2mp8M0vjiWcDoyBw/sKCmd4J8e9wEwZoiW0AE=";
   };
 
-  cargoDeps = rustPlatform.fetchCargoTarball {
-    name = "${finalAttrs.pname}-${finalAttrs.version}";
-    src = finalAttrs.src;
-    sha256 = "sha256-5FmzxT1hF/Xe+T7/DSSw1SRhZ6wmuT5rgjL+YylaNjE=";
+  cargoDeps = rustPlatform.importCargoLock {
+    lockFile = ./Cargo.lock;
+    outputHashes = {
+      "javascriptcore6-0.1.0" = "sha256-7w8CDY13dCRlFc77XxJ2/xZqlKSjqM0eiOvILOrJ4ic=";
+      "news-flash-2.3.0-alpha.0" = "sha256-phoZmTY1YVZIIktqLMnal9H5SMgNWwx7m+7AMtDcFJM=";
+      "newsblur_api-0.2.0" = "sha256-6vnFeJbdFeIau2rpUk9o72DD2ZCqicljmQjFVhY71NI=";
+      "article_scraper-2.0.0-alpha.0" = "sha256-HPEKZc7O7pbgcwR2l0kD/5442W1hzrfMadc0amrjxwI=";
+    };
   };
 
   patches = [
@@ -47,23 +55,24 @@ stdenv.mkDerivation (finalAttrs: {
 
   postPatch = ''
     patchShebangs build-aux/cargo.sh
-  '';
+    '';
 
   nativeBuildInputs = [
     meson
+    cmake
     ninja
     pkg-config
     wrapGAppsHook4
 
     # Provides setup hook to fix "Unrecognized image file format"
     gdk-pixbuf
-
+    webkitgtk
     # Provides glib-compile-resources to compile gresources
     glib
   ] ++ (with rustPlatform; [
     cargoSetupHook
-    rust.cargo
-    rust.rustc
+    cargo
+    rustc
   ]);
 
   buildInputs = [
@@ -86,6 +95,10 @@ stdenv.mkDerivation (finalAttrs: {
     gst-plugins-good
     gst-plugins-bad
   ]);
+
+    passthru.updateScript = gitUpdater {
+    rev-prefix = "v.";
+  };
 
   meta = with lib; {
     description = "A modern feed reader designed for the GNOME desktop";
