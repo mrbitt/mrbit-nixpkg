@@ -1,9 +1,10 @@
-{ config
-, lib
+{lib
 , stdenv
 , fetchurl
+#, fetchFromGitLab
 , json-glib
 , glib
+, rustPlatform
 , rustc
 , gobject-introspection
 , gsettings-desktop-schemas
@@ -19,16 +20,25 @@
 , desktop-file-utils
 , appstream-glib
 , libxml2
+, librsvg
 , wrapGAppsHook
 }:
 
 stdenv.mkDerivation rec {
   pname = "app-icon-preview";
-  version = "3.1.0";
+  version = "3.3.0";
 
+  
   src = fetchurl {
-    url = "https://gitlab.gnome.org/World/design/app-icon-preview/-/archive/master/app-icon-preview-master.tar.bz2";
-    sha256 = "sha256-x1aBaZn+s43AtTjxiLSHLBbCs/3i68RgzjlxUgXuFao=";
+    url = "https://gitlab.gnome.org/World/design/app-icon-preview/-/archive/${version}/app-icon-preview-${version}.tar.bz2";
+    sha256 = "sha256-LDj6uVAI0cYbi2mj6d0hH3s6gKUtXLxXXlQToxMpzmU=";
+  };
+    
+   cargoDeps = rustPlatform.importCargoLock {
+    lockFile = ./Cargo.lock;
+    outputHashes = {
+      "librsvg-2.56.0" = "sha256-A2NnNM3cuw8CEVNpAmu6s9IK+aBjumZ8pQdcOZDRHAo=";
+    };
   };
 
   nativeBuildInputs = [
@@ -43,20 +53,26 @@ stdenv.mkDerivation rec {
     libxml2  
     appstream-glib
     wrapGAppsHook # For GLib-GIO-ERROR **: 14:42:46.572: Settings schema
- ];
+    ] ++ (with rustPlatform; [
+    cargoSetupHook
+    librsvg
+    cargo
+    rustc
+ ]);
 
   buildInputs = [
     gsettings-desktop-schemas
     cmake
     glib
     gtk4
+    librsvg
     gtksourceview5
     libadwaita
     gjs
 ];
  
   postPatch = ''
-    patchShebangs build-aux/meson/postinstall.py data/meson.build
+    patchShebangs src/config.rs
     #substituteInPlace build-aux/meson/postinstall.py --replace "gtk-update-icon-cache" "gtk4-update-icon-cache"
     #substituteInPlace meson.build --replace "gtk-update-icon-cache" "gtk4-update-icon-cache"
   '';
