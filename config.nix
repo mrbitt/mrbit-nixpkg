@@ -33,6 +33,7 @@
     wcmucommander = callPackage ./applications/misc/wcmcommander { };
     gtkhash = pkgs.callPackage ./gtkhash {};
     tkdiff = callPackage ./tkdiff { tcl = tcl-8_5; tk = tk-8_5; };
+    tkrev = callPackage ./applications/version-management/tkrev  { };
     qwinff = libsForQt5.callPackage ./qwinff { };
     qt-fsarchiver = libsForQt5.callPackage ./qt-fsarchiver { };
     braceexpand = python3Packages.callPackage ./development/python-modules/braceexpand {};

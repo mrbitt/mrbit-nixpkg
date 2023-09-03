@@ -8,11 +8,11 @@
 }:
 
 stdenv.mkDerivation rec {
-  version = "5.4";
-  pname = "tkdiff";
+   version = "5.6";
+   pname = "tkdiff";
   src = fetchzip {
-     url = "https://downloads.sourceforge.net/project/tkdiff/tkdiff/5.4/${pname}-5-4.zip";
-     sha256 = "0d1mqs4rrh19c62kgj7k133zsn88clah35v4wp1hmimfcwcqd8pr";
+     url = "https://downloads.sourceforge.net/project/tkdiff/tkdiff/${version}/${pname}-${lib.replaceStrings [ "." ] [ "-" ] version}.zip";
+     sha256 = "sha256-EpbIdjsejkkTaSpoZRM5AHz0r1Cio+YzRryK0BoghBk=";
   };
 
   dontConfigure = true;
