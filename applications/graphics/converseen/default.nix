@@ -22,11 +22,11 @@ let inherit (lib) getDev; in
 
  stdenv.mkDerivation rec{
   pname = "converseen";
-  version = "0.10.0.1";
+  version = "0.12.0.1";
 
   src = fetchurl {
-    url = "https://sourceforge.net/projects/converseen/files/Converseen/Converseen%200.10/${pname}-${version}.tar.bz2";
-    sha256 = "sha256-+5AJDD+aZ6r2L2yo+xuGxMUvfNp2Lt7BMC+Fb1UqfJk=";
+    url = "https://sourceforge.net/projects/converseen/files/Converseen/Converseen%200.12/${pname}-${version}.tar.bz2";
+    sha256 = "sha256-whRtnjWXmvGcsUqfoao2FkvlSZ4kHrca3D30gZHYCpk=";
   };
   
   #doCheck = false;  

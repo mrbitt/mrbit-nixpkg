@@ -6,12 +6,12 @@ with lib;
 
 stdenv.mkDerivation rec {
   name = "upp";
-  version = "16953";
+  version = "17130";
   pname = "upp";
 
   src = fetchurl {
     url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
-    sha256 = "sha256-WGgonnCfZk/FDQ4VCv+KJ6+XtY9PeooDLmSPMJitlUQ=";
+    sha256 = "sha256-kRXKONqAJfOvziGA1160m/o84Js3108IkkYoUcl2AWk=";
   };
 
   postPatch = ''
@@ -48,7 +48,7 @@ stdenv.mkDerivation rec {
   # desktop entry
   install -D "./uppsrc/ide/theide.desktop" "$out/share/applications/theide.desktop"
   # icon
-  install -D "./uppsrc/ide/theide-48.png" "$out/share/pixmaps/theide.png"
+  install -D "./uppsrc/ide/icon64x64.png" "$out/share/pixmaps/theide.png"
   # fix permissions
   #find "$out/" -print0 | xargs -0 chown root:root
   #find "$out/" -type f -print0 | xargs -0 chmod 644
