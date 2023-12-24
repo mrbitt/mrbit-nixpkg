@@ -1,3 +1,4 @@
+
 { lib, stdenv, libXcomposite, libgnome-keyring, makeWrapper, udev, curlWithGnuTls, alsa-lib
 , libXfixes, atk, gtk3, libXrender, pango, gnome, cairo, freetype, fontconfig
 , libX11, libXi, libxcb, libXext, libXcursor, glib, libXScrnSaver, libxkbfile, libXtst
@@ -10,24 +11,24 @@ with lib;
 
 let
   pname = "gitkraken";
-  version = "9.4.0";
+  version = "9.11.0";
 
   throwSystem = throw "Unsupported system: ${stdenv.hostPlatform.system}";
 
   srcs = {
     x86_64-linux = fetchzip {
       url = "https://release.axocdn.com/linux/GitKraken-v${version}.tar.gz";
-      sha256 = "sha256-b2ntm5Yja806JZEmcrLi1CSsDRmBot85LPy39Zn7ULw=";
+      hash = "sha256-IUoan3CRBeVOW8DoB4Q9dNIx3f4dr006YD3GuCTt6eA=";
     };
 
     x86_64-darwin = fetchzip {
       url = "https://release.axocdn.com/darwin/GitKraken-v${version}.zip";
-      sha256 = "sha256-fyRhvaKDGYyKu6lAxHb5ve7Ix+7Tuu5JWXnqBF73ti4=";
+      hash = "sha256-npc+dwHH0tlVKkAZxmGwpoiHXeDn0VHkivqbwoJsI7M=";
     };
 
     aarch64-darwin = fetchzip {
       url = "https://release.axocdn.com/darwin-arm64/GitKraken-v${version}.zip";
-      sha256 = "sha256-qbu3gPTo5zY7OQyULY2iIUDQjwjlL4xZdkl68rE3VHA=";
+      hash = "sha256-fszsGdNKcVgKdv97gBBf+fSODzjKbOBB4MyCvWzm3CA=";
     };
   };
 
@@ -39,7 +40,8 @@ let
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
     license = licenses.unfree;
     platforms = builtins.attrNames srcs;
-    maintainers = with maintainers; [ xnwdd evanjs arkivm ];
+    maintainers = with maintainers; [ xnwdd evanjs arkivm nicolas-goudry ];
+    mainProgram = "gitkraken";
   };
 
   linux = stdenv.mkDerivation rec {
@@ -122,7 +124,9 @@ let
 
     postFixup = ''
       pushd $out/share/${pname}
-      patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" ${pname}
+      for file in ${pname} chrome-sandbox chrome_crashpad_handler; do
+        patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $file
+      done
 
       for file in $(find . -type f \( -name \*.node -o -name ${pname} -o -name \*.so\* \) ); do
         patchelf --set-rpath ${libPath}:$out/share/${pname} $file || true
@@ -137,9 +141,15 @@ let
     nativeBuildInputs = [ unzip ];
 
     installPhase = ''
+      runHook preInstall
+
       mkdir -p $out/Applications/GitKraken.app
       cp -R . $out/Applications/GitKraken.app
+
+      runHook postInstall
     '';
+
+    dontFixup = true;
   };
 in
 if stdenv.isDarwin
