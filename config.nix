@@ -8,6 +8,8 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    cryptomator = callPackage ./tools/security/cryptomator {jdk = jdk21.override { enableJavaFX = true; };};
+    veracrypt = callPackage ./applications/misc/veracrypt { wxGTK = wxGTK32; };
     gtk-pipe-viewer = perlPackages.callPackage ../applications/video/pipe-viewer { withGtk3 = true; };
     newsflash = callPackage ./applications/networking/feedreaders/newsflash {webkitgtk = webkitgtk_5_0;};
     netbeans = callPackage ./applications/editors/netbeans {jdk = jdk17;};
