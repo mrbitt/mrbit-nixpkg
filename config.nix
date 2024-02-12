@@ -8,10 +8,11 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    imhex = callPackage ./imhex { };
     cryptomator = callPackage ./tools/security/cryptomator {jdk = jdk21.override { enableJavaFX = true; };};
     veracrypt = callPackage ./applications/misc/veracrypt { wxGTK = wxGTK32; };
     gtk-pipe-viewer = perlPackages.callPackage ../applications/video/pipe-viewer { withGtk3 = true; };
-    newsflash = callPackage ./applications/networking/feedreaders/newsflash {webkitgtk = webkitgtk_5_0;};
+    newsflash = callPackage ./applications/networking/feedreaders/newsflash {webkitgtk = webkitgtk_6_0;};
     netbeans = callPackage ./applications/editors/netbeans {jdk = jdk17;};
     zutty = callPackage ./applications/terminal-emulators/zutty { fontmiscmisc = xorg.fontmiscmisc; };
     tauon = callPackage ./applications/audio/tauon { };

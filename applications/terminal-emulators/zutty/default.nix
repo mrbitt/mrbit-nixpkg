@@ -1,6 +1,6 @@
 { lib
 , stdenv
-, fetchFromGitHub
+, fetchurl
 , wafHook
 , python3
 , pkg-config
@@ -12,13 +12,11 @@
 
 stdenv.mkDerivation rec {
   pname = "zutty";
-  version = "0.14";
+  version = "0.15";
 
-  src = fetchFromGitHub {
-    owner = "tomszilagyi";
-    repo = pname;
-    rev = version;
-    hash = "sha256-b/q7hIi/U/GkKo+MIFX2wWnHZAy5rQGXNul3I1pxo1Q=";
+  src = fetchurl {
+    url = "https://git.hq.sig7.se/zutty.git/snapshot/7e481c04507e9b5cacfe67fe2b96bdb449b08726.tar.gz";
+    hash = "sha256-Ze94lkdt6DopGDoWvMS9LC6SIYtM0IF/XZiowf3R5R4=";
   };
 
   nativeBuildInputs = [
@@ -40,6 +38,12 @@ stdenv.mkDerivation rec {
 
   postInstall = ''
     install -Dm644 -t $out/share/doc/${pname} doc/*
+    install -Dm644 "./icons/zutty.desktop" -t $out/share/applications/zutty.desktop
+    install -Dm644 "./icons/zutty.svg" -t $out/share/icons/hicolor/scalable/apps/zutty.svg
+        for res in 16x16 32x32 48x48 64x64 96x96 128x128; 
+         do  
+        install -Dm644 "./icons/zutty_$res.png" -t $out/share/icons/hicolor/$res/apps/zutty.png
+      done
   '';
 
   meta = with lib; {
