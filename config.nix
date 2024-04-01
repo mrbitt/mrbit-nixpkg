@@ -9,6 +9,7 @@
     };
     
     imhex = callPackage ./imhex { };
+    tigerjython = callPackage ./applications/editors/tigerjython { };
     gencolormap = qt6.callPackage ./tools/misc/gencolormap { };
     cryptomator = callPackage ./tools/security/cryptomator {jdk = jdk21.override { enableJavaFX = true; };};
     veracrypt = callPackage ./applications/misc/veracrypt { wxGTK = wxGTK32; };
