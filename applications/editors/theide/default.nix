@@ -6,12 +6,16 @@ with lib;
 
 stdenv.mkDerivation rec {
   name = "upp";
-  version = "17221";
+  #yearver= "2023.2";
+  #version = "17045";
+  version = "17242";
   pname = "upp";
 
   src = fetchurl {
-    url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
-    sha256 = "sha256-vssscvhBdH6WxeCxaAk/SkUGQE7laXkwKLaZ0UM7yNU=";
+   url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
+    #url = "https://sourceforge.net/projects/${pname}/files/${pname}/${yearver}/${pname}-posix-${version}.tar.xz";
+    #sha256 = "sha256-b7kdZxTXFZRjd475Q38U8KWAxCD1VWdy5OFq6jPlHRc=";
+   sha256 = "sha256-DusHOoY5ZW6SQ/fJ8ARhf9YoCuR9rz31nxwVJ0+5X6Y=";
   };
 
   postPatch = ''
@@ -49,6 +53,7 @@ stdenv.mkDerivation rec {
   install -D "./uppsrc/ide/theide.desktop" "$out/share/applications/theide.desktop"
   # icon
   install -D "./uppsrc/ide/icon64x64.png" "$out/share/pixmaps/theide.png"
+  #install -D "./uppsrc/ide/theide-48.png" "$out/share/pixmaps/theide.png"
   # fix permissions
   #find "$out/" -print0 | xargs -0 chown root:root
   #find "$out/" -type f -print0 | xargs -0 chmod 644

@@ -9,6 +9,8 @@
     };
     
     imhex = callPackage ./imhex { };
+    jazz2 = callPackage ./games/jazz2 { };
+    jazz2-content = callPackage ./games/jazz2-content { };
     tigerjython = callPackage ./applications/editors/tigerjython { };
     gencolormap = qt6.callPackage ./tools/misc/gencolormap { };
     cryptomator = callPackage ./tools/security/cryptomator {jdk = jdk21.override { enableJavaFX = true; };};
