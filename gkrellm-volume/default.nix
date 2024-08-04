@@ -1,4 +1,4 @@
-{stdenv, fetchurl, gkrellm, glib, pkgconfig, gtk2, alsaLib }:
+{stdenv, fetchurl, gkrellm, glib, pkg-config, gtk2, alsaLib }:
 
 stdenv.mkDerivation rec {
   pname = "gkrellm-volume";
@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
 
     patches = [./gkrellm-volume-2.1.13-reenable.patch];
 
-    buildInputs = [ pkgconfig gkrellm gtk2 glib alsaLib ];
+    buildInputs = [ pkg-config gkrellm gtk2 glib alsaLib ];
     #dontConfigure = true;
     buildPhase = '' make clean
                     make enable_alsa=1 '';

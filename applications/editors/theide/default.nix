@@ -8,14 +8,14 @@ stdenv.mkDerivation rec {
   name = "upp";
   #yearver= "2023.2";
   #version = "17045";
-  version = "17242";
+  version = "17285";
   pname = "upp";
 
   src = fetchurl {
    url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
     #url = "https://sourceforge.net/projects/${pname}/files/${pname}/${yearver}/${pname}-posix-${version}.tar.xz";
     #sha256 = "sha256-b7kdZxTXFZRjd475Q38U8KWAxCD1VWdy5OFq6jPlHRc=";
-   sha256 = "sha256-DusHOoY5ZW6SQ/fJ8ARhf9YoCuR9rz31nxwVJ0+5X6Y=";
+   sha256 = "sha256-pPL8Bq4TcWooy2CcS7f66yxaFQ6e/EzgIj64ghMMgLs=";
   };
 
   postPatch = ''
