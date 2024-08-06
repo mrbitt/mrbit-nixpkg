@@ -3,14 +3,14 @@
 stdenv.mkDerivation rec {
   pname = "qownnotes";
   appname = "QOwnNotes";
-  version = "23.12.4";
+  version = "24.8.4";
 
   src = fetchurl {
     url = "https://github.com/pbek/QOwnNotes/releases/download/v${version}/qownnotes-${version}.tar.xz";
     #url = "https://download.tuxfamily.org/${pname}/src/${pname}-${version}.tar.xz";
     # Fetch the checksum of current version with curl:
     # curl https://download.tuxfamily.org/qownnotes/src/qownnotes-<version>.tar.xz.sha256
-    sha256 = "sha256-1xTJ7QV7T9PCo/Tta3Xmlmb99EL7gfFnUUXmehO0tzU=";
+    sha256 = "sha256-uB3MttVw7+e6hRMJ2UaYvcaofMEvkToWpBhVldcGmrI=";
   };
  
     #dontWrapQtApps = true;
