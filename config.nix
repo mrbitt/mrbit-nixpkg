@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    goatattack = callPackage ./games/goatattack { };
     imhex = callPackage ./imhex { };
     jazz2 = callPackage ./games/jazz2 { };
     jazz2-content = callPackage ./games/jazz2-content { };
