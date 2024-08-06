@@ -12,11 +12,11 @@
 
 stdenv.mkDerivation rec {
   pname = "zutty";
-  version = "0.15";
+  version = "0.16";
 
   src = fetchurl {
-    url = "https://git.hq.sig7.se/zutty.git/snapshot/7e481c04507e9b5cacfe67fe2b96bdb449b08726.tar.gz";
-    hash = "sha256-Ze94lkdt6DopGDoWvMS9LC6SIYtM0IF/XZiowf3R5R4=";
+    url = "https://git.hq.sig7.se/zutty.git/snapshot/33dcbd24ae9ab4f8005ce7ba9fad9821091bb8bc.tar.gz";
+    hash = "sha256-vphoqzzgDVl0tnU5E7wR8EPI3tMIBOo45GOZRFuMzSs=";
   };
 
   nativeBuildInputs = [
