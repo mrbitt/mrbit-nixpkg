@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    ffqueue = callPackage ./applications/video/ffqueue  { };
     goatattack = callPackage ./games/goatattack { };
     imhex = callPackage ./imhex { };
     jazz2 = callPackage ./games/jazz2 { };
