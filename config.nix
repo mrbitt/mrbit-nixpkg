@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    puffotter = python3Packages.callPackage ./development/python-modules/puffotter {};
     ffqueue = callPackage ./applications/video/ffqueue  { };
     goatattack = callPackage ./games/goatattack { };
     imhex = callPackage ./imhex { };
