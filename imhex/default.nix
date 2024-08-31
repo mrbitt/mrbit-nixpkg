@@ -9,6 +9,7 @@
 , capstone
 , dbus
 , libGLU
+, libGL
 , glfw3
 , file
 , perl
@@ -19,19 +20,18 @@
 , nlohmann_json
 , yara
 , rsync
+, autoPatchelfHook
 }:
 
 let
-  # FIXME: unstable, stable needs #252945 (details in #258964)
-  # Next version bump should be stabilized
-  version = "unstable-2024-04-01";
-  patterns_version = "1.32.2";
+  version = "1.35.4";
+  patterns_version = "1.35.4";
 
   patterns_src = fetchFromGitHub {
     owner = "WerWolv";
     repo = "ImHex-Patterns";
     rev = "ImHex-v${patterns_version}";
-    hash = "sha256-K+LiQvykCrOwhEVy37lh7VSf5YJyBQtLz8AGFsuRznQ=";
+    hash = "sha256-7ch2KXkbkdRAvo3HyErWcth3kG4bzYvp9I5GZSsb/BQ=";
   };
 
 in
@@ -40,16 +40,17 @@ stdenv.mkDerivation rec {
   inherit version;
 
   src = fetchFromGitHub {
+    name = "ImHex-source-${version}";
     fetchSubmodules = true;
     owner = "WerWolv";
     repo = pname;
-    rev = "a1edb1b89655e9a36ec7273521b0e40c61c60c72";
-    hash = "sha256-MYOZHQMYbbP01z0FyoCgTzwY1/71eUCmJYYfYvN9+so=";
+    rev = "refs/tags/v${version}";
+    hash = "sha256-6QpmFkSMQpGlEzo7BHZn20c+q8CTDUB4yO87wMU5JT4";
   };
 
-  patches = [./0002-fix-main-Handle-different-LLVM-version.patch];
+  #patches = [./0002-fix-main-Handle-different-LLVM-version.patch];
   
-  nativeBuildInputs = [ cmake llvm python3 perl pkg-config rsync ];
+  nativeBuildInputs = [ autoPatchelfHook cmake llvm python3 perl pkg-config rsync ];
 
   buildInputs = [
     capstone
@@ -61,9 +62,16 @@ stdenv.mkDerivation rec {
     gtk3
     jansson
     libGLU
+    libGL
     mbedtls
     nlohmann_json
     yara
+  ];
+
+  autoPatchelfIgnoreMissingDeps = [ "*.hexpluglib" ];
+  appendRunpaths = [
+    (lib.makeLibraryPath [ libGL ])
+    "${placeholder "out"}/lib/imhex/plugins"
   ];
 
   cmakeFlags = [
