@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    ffaudioconverter = libsForQt5.callPackage ./applications/audio/ffaudioconverter { };
     opensurge = callPackage ./games/opensurge { };
     puffotter = python3Packages.callPackage ./development/python-modules/puffotter {};
     ffqueue = callPackage ./applications/video/ffqueue  { };
