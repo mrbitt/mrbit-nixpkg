@@ -1,109 +1,79 @@
-{ stdenv 
-, ccacheStdenv
-, lib
-, fetchurl
-, python3
-, glib
-, itstool
-, libunique
-, gettext
-, samba
-, yelp-tools
-, gsettings-desktop-schemas
-, appstream-glib
-, desktop-file-utils
-, gexiv2
-, gtest
-, pkg-config
-, gobject-introspection
-, flex
-, meson
-, ninja
-, makeWrapper
-, wrapGAppsHook4
-, exiv2
-, libgsf
-, poppler
-, taglib
-, shared-mime-info
-, gtk2
+{
+  lib,
+  stdenv,
+  fetchFromGitLab,
+  meson,
+  ninja,
+  pkg-config,
+  flex,
+  itstool,
+  rustPlatform,
+  rustc,
+  cargo,
+  wrapGAppsHook4,
+  desktop-file-utils,
+  exiv2,
+  libgsf,
+  taglib,
+  poppler,
+  samba,
+  gtest,
 }:
- 
- #ccacheStdenv.mkDerivation {
- stdenv.mkDerivation rec {
-  pname = "gnome-commander";
-  version = "1.16.2";
 
-  src = fetchurl {
-    url ="https://download.gnome.org/sources/${pname}/1.16/${pname}-${version}.tar.xz";
-    sha256 = "sha256-fPXVbHepXYKPJUBylDEquq4g3GtVbOr9lCTb/iCeXtM=";
+stdenv.mkDerivation (finalAttrs: {
+  pname = "gnome-commander";
+  version = "1.18.1-unstable-2024-10-18";
+
+  src = fetchFromGitLab {
+    domain = "gitlab.gnome.org";
+    owner = "GNOME";
+    repo = "gnome-commander";
+    rev = "28dadb1ef9342bb1a5f9a65b1a5bf3bd80e3d30a";
+    hash = "sha256-DxsZJht+PD3vY5vc1vzpRD8FHBPKcjK4qfke5nhvHS0=";
   };
 
-   preConfigure = ''
-    export CCACHE_DIR=/nix/var/cache/ccache
-    export CCACHE_UMASK=007
+  # hard-coded schema paths
+  postPatch = ''
+    substituteInPlace src/gnome-cmd-data.cc plugins/fileroller/file-roller-plugin.cc \
+      --replace-fail \
+        '/share/glib-2.0/schemas' \
+        '/share/gsettings-schemas/${finalAttrs.finalPackage.name}/glib-2.0/schemas'
   '';
 
-
-postPatch = '' substituteInPlace data/org.gnome.gnome-commander.gschema.xml --replace  '/usr/local' $out'/'
-             for f in doc/{C/${pname},cs/${pname},de/${pname},el/${pname},es/${pname},fr/${pname},ru/${pname},sl/${pname},sv/${pname}}*.xml;do
-               substituteInPlace $f --replace  '/usr' $out'/'
-             done
-              '';
+  cargoDeps = rustPlatform.fetchCargoTarball {
+    inherit (finalAttrs) pname version src;
+    hash = "sha256-Nx/e2H9NxCTj62xVDlKTpPdjlxAx2YAcQJh1kHByrd4=";
+  };
 
   nativeBuildInputs = [
-    itstool
+    meson
+    ninja
     pkg-config
     flex
-    glib
-    gtk2
-    gobject-introspection
-    makeWrapper
+    itstool
+    rustPlatform.cargoSetupHook
+    rustc
+    cargo
     wrapGAppsHook4
-    meson ninja samba gtest desktop-file-utils appstream-glib
+    desktop-file-utils
   ];
 
   buildInputs = [
-    yelp-tools
-    gsettings-desktop-schemas
-    gettext
-    libunique
-    glib
-    libgsf
-    poppler
     exiv2
+    libgsf
     taglib
+    poppler
+    samba
+    gtest
   ];
 
-preFixup = ''
-   mkdir -p "$out/share/glib-2.0/schemas"
-   install -Dm644 $out/share/gsettings-schemas/${pname}-${version}/glib-2.0/schemas/* "$out/share/glib-2.0/schemas"
-   
-    #substituteInPlace $out/share/gsettings-schemas/${pname}-${version}/glib-2.0/schemas/org.gnome.gnome-commander.gschema.xml --replace /usr/local $out/share
-    #glib-compile-schemas "$out/share/glib-2.0/schemas"
-    #cp -f $out/share/gsettings-schemas/${pname}-${version}/glib-2.0/schemas/* "$out/share/glib-2.0/schemas"
-   # gappsWrapperArgs+=(--prefix XDG_DATA_DIRS : "${shared-mime-info}/share")
-   # gappsWrapperArgs+=(--prefix GSETTINGS_SCHEMA_DIR : "$out/share/gsettings-schemas/${pname}-${version}/glib-2.0/schemas/")
-   # glib-compile-schemas $out/share/gsettings-schemas/${pname}-${version}/glib-2.0/schemas
-   #  gappsWrapperArgs+=(--prefix XDG_DATA_DIRS : "$out/share/gsettings-schemas/${pname}-${version}")
-   #  makeWrapperArgs+=("''${gappsWrapperArgs[@]}")
-   '';
-   
-    dontWrapQtApps = true;
-   
-postInstall = ''
-    rm -f $out/lib/${pname}/*.la $out/lib/${pname}/plugins/*.la 
-       '';
-#postInstall = ''
-#  substituteInPlace "$out/share/gsettings-schemas/${pname}-${version}/glib-2.0/schemas/org.gnome.gnome-commander.gschema.xml" --replace "/usr/local" "$out/share"
-#  substituteInPlace "$out/share/glib-2.0/schemas/org.gnome.gnome-commander.gschema.xml" --replace "/usr/local" "$out/share
-#    '';
- 
-   meta = with lib; {
-    homepage = "http://gcmd.github.io/";
-    description = "Graphical two-pane filemanager for Gnome";
-    maintainers = [ ];
-    license = licenses.gpl2Plus;
-    platforms = platforms.linux;
+  meta = {
+    description = "Fast and powerful twin-panel file manager for the Linux desktop";
+    homepage = "https://gcmd.github.io";
+    license = lib.licenses.gpl2Plus;
+    mainProgram = "gnome-commander";
+    maintainers = with lib.maintainers; [ aleksana ];
+    platforms = lib.platforms.linux;
   };
-}
+})
+

@@ -1,4 +1,4 @@
-{stdenv, fetchurl, gkrellm, glib, gtk2, pkgconfig}:
+{stdenv, fetchurl, gkrellm, glib, gtk2, pkg-config}:
 
 stdenv.mkDerivation rec {
   pname = "gkrelltop";
@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
 
     patches = [./gkrelltop-2.2.13-fix-build-system-1.patch];
 
-    buildInputs = [ pkgconfig glib gtk2 gkrellm ];
+    buildInputs = [ pkg-config glib gtk2 gkrellm ];
     #dontConfigure = true;
     buildPhase = '' make clean
                     make  '';

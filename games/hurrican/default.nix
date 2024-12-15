@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchFromGitHub, fetchurl, cmake, SDL, SDL_image, SDL_mixer, libepoxy, libGLU, libmodplug, makeDesktopItem }:
+{ lib, stdenv, fetchFromGitHub, fetchurl, cmake, pkg-config, SDL, SDL_image, SDL_mixer, libepoxy, libGLU, libmodplug, makeDesktopItem }:
 
 stdenv.mkDerivation rec {
   pname = "Hurrican";
@@ -13,17 +13,17 @@ stdenv.mkDerivation rec {
   };
  
   sourceRoot = "${src.name}/Hurrican";
-  nativeBuildInputs = [ cmake ];
+ 
+  env.NIX_CFLAGS_COMPILE = toString [
+    "-I${lib.getDev SDL}/include/SDL"
+    "-I${lib.getDev SDL_image}/include/SDL"
+    "-I${lib.getDev SDL_mixer}/include/SDL"
+  ];
+   
+  nativeBuildInputs = [ cmake pkg-config  ];
   buildInputs = [ SDL SDL_image SDL_mixer libepoxy libmodplug libGLU ];
   #makeFlags = [ "PREFIX=$(out)" ];
-  NIX_CFLAGS_COMPILE = [
-    #"-I${SDL}/include/SDL"
-    "-I${SDL_image}/include/SDL"
-    "-I${SDL_mixer}/include/SDL"
-    #"-I${SDL_ttf}/include/SDL"
-    #"-I${gtk2.dev}/include/gtk-2.0"
-    #"-I${glib.dev}/include/glib-2.0"
-  ];
+ 
 
     # Create "hurrican.desktop" file
      fname="hurrican";

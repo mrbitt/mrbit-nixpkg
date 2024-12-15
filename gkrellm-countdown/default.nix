@@ -1,4 +1,4 @@
-{stdenv, fetchurl, gkrellm, glib, pkgconfig, gtk2 }:
+{stdenv, fetchurl, gkrellm, glib, pkg-config, gtk2 }:
 
 stdenv.mkDerivation rec {
   pname = "gkrellm-countdown";
@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
 
 #patches = [./gkrellmoon-0.6-makefile.patch];
 
-    nativeBuildInputs = [ pkgconfig ];
+    nativeBuildInputs = [ pkg-config ];
     buildInputs = [ gkrellm gtk2 glib ];
     dontConfigure = true;
     buildPhase = '' make clean

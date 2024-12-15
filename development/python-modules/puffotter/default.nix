@@ -35,7 +35,7 @@ python3.pkgs.buildPythonApplication rec {
   meta = with lib; {
     description = "Convenience library for python";
     homepage = "https://pypi.org/project/puffotter/";
-    license = licenses.unfree; # FIXME: nix-init did not found a license
+    license = licenses.gpl3; # FIXME: nix-init did not found a license
     maintainers = with maintainers; [ ];
     mainProgram = "puffotter";
   };

@@ -1,4 +1,4 @@
-{stdenv, fetchurl, gkrellm, glib, pkgconfig, gtk2, gdk-pixbuf}:
+{stdenv, fetchurl, gkrellm, glib, pkg-config, gtk2, gdk-pixbuf}:
 
 stdenv.mkDerivation rec {
   name = "alltraxclock";
@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
     sha256 = "sha256-QW0fgpQXg72YIroy8IcWRicBAT7Q4Q1NBkDZ1OfRgY0=";
   };
 
-    buildInputs = [ pkgconfig gkrellm gtk2 glib gdk-pixbuf ];
+    buildInputs = [ pkg-config gkrellm gtk2 glib gdk-pixbuf ];
 
     dontStrip = true;
     buildPhase = '' make clean

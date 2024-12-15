@@ -49,7 +49,7 @@ stdenv.mkDerivation rec {
   };
 
   #patches = [./0002-fix-main-Handle-different-LLVM-version.patch];
-  
+
   nativeBuildInputs = [ autoPatchelfHook cmake llvm python3 perl pkg-config rsync ];
 
   buildInputs = [
@@ -87,12 +87,12 @@ stdenv.mkDerivation rec {
   # rsync is used here so we can not copy the _schema.json files
   postInstall = ''
     mkdir -p $out/share/imhex
-    rsync -av --exclude="*_schema.json" ${patterns_src}/{constants,encodings,includes,magic,patterns} $out/share/imhex
+    rsync -av --exclude="*_schema.json" ${patterns_src}/{constants,encodings,includes,nodes,magic,patterns} $out/share/imhex
   '';
 
   meta = with lib; {
     description = "Hex Editor for Reverse Engineers, Programmers and people who value their retinas when working at 3 AM";
-    homepage = "https://github.com/WerWolv/ImHex" "https://github.com/WerWolv/ImHex-Patterns"; 
+    homepage = "https://github.com/WerWolv/ImHex" "https://github.com/WerWolv/ImHex-Patterns";
     license = with licenses; [ gpl2Only ];
     maintainers = with maintainers; [ luis kashw2 cafkafk ];
     platforms = platforms.linux;

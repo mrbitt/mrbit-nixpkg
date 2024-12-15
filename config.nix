@@ -8,6 +8,8 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    leafpad =./applications/editors/leafpad { };
+    #l3afpad =./applications/editors/l3afpad { };
     ffaudioconverter = libsForQt5.callPackage ./applications/audio/ffaudioconverter { };
     opensurge = callPackage ./games/opensurge { };
     puffotter = python3Packages.callPackage ./development/python-modules/puffotter {};
