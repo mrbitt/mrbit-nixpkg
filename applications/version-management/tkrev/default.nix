@@ -2,11 +2,11 @@
 
 stdenv.mkDerivation rec {
   pname = "tkrev";
-  version = "9.4.5";
+  version = "9.4.9";
 
   src = fetchurl {
     url = "mirror://sourceforge/tkcvs/tkrev_${version}.tar.gz";
-    sha256 = "sha256-jMlrik3WNef4L4YIpiM9469Xi5mcw/CMBv/iRQZGsuk=";
+    sha256 = "sha256-CigKxj7WBroEkJu3UVqQnku9P1Ma6edEFWsCEbjPbDI=";
   };
 
   nativeBuildInputs = [ copyDesktopItems ];
@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
     ./doinstall.tcl $out
       mkdir -p $out/share/applications $out/share/pixmaps
       install -Dvm444 "tkdiff/Delta.ico" "$out/share/pixmaps/tkdiff.png"
-      install -Dvm444 "tkrev/bitmaps/TkRev_128.gif" "$out/share/pixmaps/tkrev.png"
+      install -Dvm444 "tkrev/bitmaps/TkRev_128.png" "$out/share/pixmaps/tkrev.png"
      runHook postInstall
     '';
 

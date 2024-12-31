@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    qmplay2 = qt6Packages.callPackage /applications/video/qmplay2 { qtVersion = "6";};
     leafpad =./applications/editors/leafpad { };
     #l3afpad =./applications/editors/l3afpad { };
     ffaudioconverter = libsForQt5.callPackage ./applications/audio/ffaudioconverter { };
