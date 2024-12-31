@@ -166,14 +166,14 @@ let
 
   linux = stdenv.mkDerivation (finalAttrs: {
     inherit pname meta passthru;
-    version = "133.0.6911.0";
+    version = "133.0.6929.0";
       
  # Check for new Linux releases using:
  #curl -sSf https://dl.google.com/linux/chrome/deb/dists/stable/main/binary-amd64/Packages | grep -A1 "Package: google-chrome-canary" | awk '/Version/{print $2}' | cut -d '-' -f1
  
     src = fetchurl {
       url = "https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-${channels}/google-chrome-${channels}_${finalAttrs.version}-1_amd64.deb";
-      hash = "sha256-0JfMR11eR5Q6W36/NAJ1fvB7NCfwIiHjxzpqYFhZ4Ik=";
+      hash = "sha256-BMmuFJWjSloPBF9HyIKZrhTKZBzd2D1Y1xIHNsiHrxM=";
     };
 
     # With strictDeps on, some shebangs were not being patched correctly
