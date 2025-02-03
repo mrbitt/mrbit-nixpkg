@@ -2,14 +2,8 @@
 , stdenv
 , fetchurl
 , cmake
-, qttools
-, qtbase
-, qtdeclarative
-, qtsvg
-, qtwayland
-, qtwebsockets
+, qt6Packages
 , makeWrapper
-, wrapQtAppsHook
 , botan2
 , pkg-config
 , nixosTests
@@ -20,31 +14,31 @@
 let
   pname = "qownnotes";
   appname = "QOwnNotes";
-  version = "24.12.7";
+  version = "25.2.1";
 in
 stdenv.mkDerivation {
   inherit pname version;
 
   src = fetchurl {
     url = "https://github.com/pbek/QOwnNotes/releases/download/v${version}/qownnotes-${version}.tar.xz";
-    hash = "sha256-48puEyScG6EIrsXZpFc62dl4a23p+TO2buzuwq9m3Sw=";
+    hash = "sha256-hP2Q0VZfA6+jmUUqW0L/ufmw2vE9gFj5GSm2G8xRda0=";
   };
 
   nativeBuildInputs = [
     cmake
-    qttools
-    wrapQtAppsHook
+    qt6Packages.qttools
+    qt6Packages.wrapQtAppsHook
     pkg-config
     installShellFiles
   ] ++ lib.optionals stdenv.hostPlatform.isLinux [ xvfb-run ] ++ lib.optionals stdenv.hostPlatform.isDarwin [ makeWrapper ];
 
   buildInputs = [
-    qtbase
-    qtdeclarative
-    qtsvg
-    qtwebsockets
+    qt6Packages.qtbase
+    qt6Packages.qtdeclarative
+    qt6Packages.qtsvg
+    qt6Packages.qtwebsockets
     botan2
-  ] ++ lib.optionals stdenv.hostPlatform.isLinux [ qtwayland ];
+  ] ++ lib.optionals stdenv.hostPlatform.isLinux [ qt6Packages.qtwayland ];
 
   cmakeFlags = [
     "-DQON_QT6_BUILD=ON"

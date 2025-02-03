@@ -8,8 +8,9 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    rocksndiamonds = callPackage ./games/rocksndiamonds { };
     delineate = callPackage ./development/delineate {};
-    qmplay2 = qt6Packages.callPackage /applications/video/qmplay2 { qtVersion = "6";};
+    qmplay2 = callPackage /applications/video/qmplay2 { qtVersion = "6";};
     leafpad =./applications/editors/leafpad { };
     #l3afpad =./applications/editors/l3afpad { };
     ffaudioconverter = libsForQt5.callPackage ./applications/audio/ffaudioconverter { };
@@ -21,7 +22,7 @@
     jazz2 = callPackage ./games/jazz2 { };
     jazz2-content = callPackage ./games/jazz2-content { };
     tigerjython = callPackage ./applications/editors/tigerjython { };
-    gencolormap = qt6.callPackage ./tools/misc/gencolormap { };
+    gencolormap = callPackage ./tools/misc/gencolormap { };
     cryptomator = callPackage ./tools/security/cryptomator {jdk = jdk21.override { enableJavaFX = true; };};
     veracrypt = callPackage ./applications/misc/veracrypt { wxGTK = wxGTK32; };
     gtk-pipe-viewer = perlPackages.callPackage ../applications/video/pipe-viewer { withGtk3 = true; };
@@ -35,7 +36,7 @@
     converseen = libsForQt5.callPackage ./applications/graphics/converseen { };
     krita = libsForQt5.callPackage ./applications/graphics/krita { };
     notepadqq = libsForQt5.callPackage ./applications/editors/notepadqq { };
-    qownnotes = qt6Packages.callPackage ./applications/office/qownnotes {stdenv = if stdenv.isDarwin then darwin.apple_sdk_11_0.stdenv else stdenv; };
+    qownnotes = callPackage ./applications/office/qownnotes {stdenv = if stdenv.isDarwin then darwin.apple_sdk_11_0.stdenv else stdenv; };
     wxhexeditor = callPackage ./applications/editors/wxhexeditor { };
     wike = callPackage ./applications/misc/wike { };
     theide = callPackage ./applications/editors/theide { };

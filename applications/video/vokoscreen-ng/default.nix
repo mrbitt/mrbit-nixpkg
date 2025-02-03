@@ -1,74 +1,76 @@
-{ lib
-, mkDerivation
-, fetchurl
-, pkg-config
-, qmake
-, qttools
-, gstreamer
-, libX11
-, pulseaudio
-, qtbase
-, qtmultimedia
-, qtx11extras
-, wayland
-, gst-plugins-base
-, gst-plugins-good
-, gst-plugins-bad
-, gst-plugins-ugly
+{
+  fetchFromGitHub,
+  gst_all_1,
+  lib,
+  libX11,
+  pipewire,
+  pkg-config,
+  pulseaudio,
+  qt6,
+  stdenv,
+  wayland,
 }:
-mkDerivation rec {
 
+stdenv.mkDerivation rec {
   pname = "vokoscreen-ng";
-  version = "3.8.0";
+  version = "4.4.0";
 
-  src = fetchurl {
-       url = "https://github.com/vkohaupt/vokoscreenNG/archive/refs/tags/${version}.tar.gz";
-     #owner = "vkohaupt";
-     #repo = "vokoscreenNG";
-     #rev = version;
-    sha256 = "sha256-Nl6y4s9rl0Kdu1C2yX9H2vhqAek97m+grJL90hz8suw=";
+  src = fetchFromGitHub {
+    owner = "vkohaupt";
+    repo = "vokoscreenNG";
+    tag = version;
+    hash = "sha256-5rESTLIvjc/Jztc7LAPl74fxgDsam9SfBa6B5yTXb8E=";
   };
 
- qmakeFlags = [ "src/vokoscreenNG.pro" "DESTDIR=${placeholder "out"}/bin" ];
+  qmakeFlags = [ "src/vokoscreenNG.pro" ];
 
-  nativeBuildInputs = [ qttools pkg-config qmake ];
+  nativeBuildInputs = [
+    qt6.qttools
+    pkg-config
+    qt6.qmake
+    qt6.wrapQtAppsHook
+  ];
   buildInputs = [
-    gstreamer
+    gst_all_1.gstreamer
     libX11
     pulseaudio
-    qtbase
-    qtmultimedia
-    qtx11extras
+    qt6.qtbase
+    qt6.qtmultimedia
     wayland
-    gst-plugins-base
-    gst-plugins-good
-    gst-plugins-bad
-    gst-plugins-ugly
+    pipewire
+    gst_all_1.gst-plugins-base
+    gst_all_1.gst-plugins-good
+    gst_all_1.gst-plugins-bad
+    gst_all_1.gst-plugins-ugly
   ];
-   
-   installPhase = ''
-      runHook preInstall
-        install -Dm444 -t $out/share/applications src/applications/vokoscreenNG.desktop
-        install -Dm644 -t $out/share/pixmaps      src/applications/vokoscreenNG.png
-	install -Dm644 -t $out/share/icons        src/vokoscreenNG.ico
-	
-     runHook postInstall
-   '';
 
-  postPatch = ''
-    substituteInPlace src/vokoscreenNG.pro \
-      --replace lrelease-qt5 lrelease
+  # TODO: translations don't get built by the qmake project
+  preBuild = ''
+    lrelease src/language/*.ts
   '';
 
- postInstall = ''
+  # upstream doesn't provide an install target
+  installPhase = ''
+    runHook preInstall
+
+    install -Dm755 -t $out/bin vokoscreenNG
+    install -Dm644 -t $out/share/applications src/applications/vokoscreenNG.desktop
+    install -Dm644 -t $out/share/icons src/applications/vokoscreenNG.png
+
     qtWrapperArgs+=(--prefix GST_PLUGIN_SYSTEM_PATH_1_0 : "$GST_PLUGIN_SYSTEM_PATH_1_0")
+
+    runHook postInstall
   '';
 
   meta = with lib; {
     description = "User friendly Open Source screencaster for Linux and Windows";
     license = licenses.gpl2Plus;
     homepage = "https://github.com/vkohaupt/vokoscreenNG";
-    maintainers = with maintainers; [ shamilton ];
+    maintainers = with maintainers; [
+      shamilton
+      dietmarw
+    ];
     platforms = platforms.linux;
+    mainProgram = "vokoscreenNG";
   };
 }
