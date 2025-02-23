@@ -14,14 +14,14 @@
 let
   pname = "qownnotes";
   appname = "QOwnNotes";
-  version = "25.2.1";
+  version = "25.2.8";
 in
 stdenv.mkDerivation {
   inherit pname version;
 
   src = fetchurl {
     url = "https://github.com/pbek/QOwnNotes/releases/download/v${version}/qownnotes-${version}.tar.xz";
-    hash = "sha256-hP2Q0VZfA6+jmUUqW0L/ufmw2vE9gFj5GSm2G8xRda0=";
+    hash = "sha256-rM3FJBoi1GFdE0wW5hWSUChfGZ/A3Uj6iX091JsrmT0=";
   };
 
   nativeBuildInputs = [
@@ -70,6 +70,9 @@ stdenv.mkDerivation {
     mv $out/bin/${appname} $out/bin/${pname}.bin
     mv $out/bin/${pname}.bin $out/bin/${pname}
   '';
+
+  # Fontconfig error: No writable cache directories
+    preBuild = "export XDG_CACHE_HOME=$(mktemp -d)";
 
   # Tests QOwnNotes using the NixOS module by launching xterm:
   passthru.tests.basic-nixos-module-functionality = nixosTests.qownnotes;
