@@ -1,20 +1,6 @@
-{ stdenv, fetchurl, pkg-config, autoconf, glib, gtk3, makeDesktopItem }:
+{ lib, stdenv, fetchurl, pkg-config, autoconf, glib, gtk3, copyDesktopItems, makeDesktopItem }:
 
-let
-  pname = "gentoo";
 
-  desktop = makeDesktopItem {
-    desktopName = pname;
-    name = pname;
-    exec = "${pname}";
-    icon = "${pname}";
-    terminal = "False";
-    comment = "Lightweight graphical file manager for Unix-like systems, using GTK3";
-    type = "Application";
-    categories = "System;FileTools;FileManager;";
-    genericName = pname;
-  };
-in
 stdenv.mkDerivation rec {
   pname = "gentoo";
   version = "0.20.7";
@@ -24,6 +10,21 @@ stdenv.mkDerivation rec {
     sha256 = "1amiibrarywi92r3v469jqjl7pfqbc897868812pwbwsa0ws2l4s";
   };
 
+  desktopItems = [
+    (makeDesktopItem {
+      name = "gentoo";
+      desktopName = "Gentoo";
+      exec = "gentoo";
+      comment = "Lightweight graphical file manager for Unix-like systems, using GTK3";
+      icon = "gentoo";
+      categories = [ "FileTools" "FileManager"
+        "System"
+        "Emulator"
+      ];
+    })
+  ];
+  
+    
   Patches = ''
     substituteInPlace configure.ac --replace "GTK_DISABLE_DEPRECATED" ""
     '';
@@ -31,8 +32,9 @@ stdenv.mkDerivation rec {
                  sed -i -e 's^/gnome/16x16/mimetypes^/gentoo^' gentoorc.in || die
                  sed -i -e 's^/usr/share/icons^'$out'/share/gentoo^' gentoorc.in || die
                  sed -i -e 's^DirEnter &apos;dir=/usr/local^'$out'/share^' gentoorc.in || die '';
-
-  nativeBuildInputs = [ autoconf pkg-config ];
+ 
+  
+  nativeBuildInputs = [ copyDesktopItems autoconf pkg-config ];
   buildInputs = [ glib gtk3 ];
 
   postInstall = ''
@@ -44,12 +46,12 @@ stdenv.mkDerivation rec {
     cp -r docs/* $out/share/doc/gentoo/
 
     mkdir -p "$out/share/applications"
-    install -Dm644 ${desktop}/share/applications/${pname}.desktop $out/share/applications/${pname}.desktop
+    
     mkdir -p $out/share/pixmaps
     cp $out/share/icons/gentoo/${pname}.png $out/share/pixmaps/${pname}.png
   '';
 
-  meta = with stdenv.lib; {
+ meta = with lib; {
     description = "Graphical file manager for Unix-like systems, using GTK+";
     homepage = "https://sourceforge.net/projects/gentoo";
     license = licenses.gpl2;
