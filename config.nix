@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    toppler = callPackage ./games/toppler { };
     rocksndiamonds = callPackage ./games/rocksndiamonds { };
     delineate = callPackage ./development/delineate {};
     qmplay2 = callPackage /applications/video/qmplay2 { qtVersion = "6";};
