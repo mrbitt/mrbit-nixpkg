@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    mfcl2827dw = callPackage ./tools/system/cups-brother-mfcl2827dw { };
     toppler = callPackage ./games/toppler { };
     rocksndiamonds = callPackage ./games/rocksndiamonds { };
     delineate = callPackage ./development/delineate {};
