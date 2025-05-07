@@ -82,11 +82,11 @@ stdenv.mkDerivation {
       mkdir -p $out/lib/cups/filter $out/share/cups/model
 
       ln -s \
-        $out/opt/brother/Printers/MFCL2800DW/lpd/lpdfilter \
+        $out/opt/brother/Printers/MFCL2827DW/lpd/lpdfilter \
         $out/lib/cups/filter/brother_lpdwrapper_MFCL2827DW
 
       ln -s \
-        $out/opt/brother/Printers/MFCL2800DW/cupswrapper/brother-MFCL2827DW-cups-en.ppd \
+        $out/opt/brother/Printers/MFCL2827DW/cupswrapper/brother-MFCL2827DW-cups-en.ppd \
         $out/share/cups/model/
 
       runHook postInstall
@@ -94,7 +94,7 @@ stdenv.mkDerivation {
 
   meta = {
     homepage = "http://www.brother.com/";
-    description = "Brother MFC-L2750DW printer driver";
+    description = "Brother MFC-L2827DW printer driver";
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
     license = lib.licenses.unfree;
     platforms = builtins.map (arch: "${arch}-linux") arches;

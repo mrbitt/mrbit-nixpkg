@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, qtbase, qttools, qtdeclarative, pkg-config, makeWrapper, lsb-release, qtquickcontrols, qmake, qt5, mkDerivation , ffmpeg-full, sox ,libnotify ,mplayer }:
+{ lib, stdenv, fetchurl, qtbase, qttools, qtdeclarative, pkg-config, makeWrapper, lsb-release, qtquickcontrols, qmake, qt5, mkDerivation , jellyfin-ffmpeg, sox ,libnotify ,mplayer }:
 
 mkDerivation  rec{
   pname = "qwinff";
@@ -22,7 +22,7 @@ mkDerivation  rec{
             ]; 
             
   nativeBuildInputs = [ qmake pkg-config makeWrapper lsb-release ];
-  buildInputs = [ qtbase qttools qtquickcontrols qtdeclarative sox ffmpeg-full libnotify mplayer ];
+  buildInputs = [ qtbase qttools qtquickcontrols qtdeclarative sox jellyfin-ffmpeg libnotify mplayer ];
     dontConfigure = true;
     enableParallelBuilding = true;
   postPatch = '' #substituteInPlace Makefile --replace 'DATA_PATH' '$(out)/bin'

@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, yad, glib, inxi, makeDesktopItem }:
+{ lib, stdenv, fetchurl, yad, glib, inxi, makeDesktopItem }:
 
 stdenv.mkDerivation rec {
   pname = "inxi-gui";
@@ -38,7 +38,7 @@ stdenv.mkDerivation rec {
       substituteInPlace $out/share/applications/'Inxi Gui'.desktop --replace "Categories=GTK;" "Categories="
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Simple GUI frontend to inxi script bash";
     homepage = "https://www.linux-apps.com/p/1303949/";
     license = licenses.gpl3;
