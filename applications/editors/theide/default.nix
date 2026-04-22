@@ -1,25 +1,39 @@
-{ lib, stdenv, fetchurl, pkg-config, zlib, libnotify, openssl, gtk3
-, clang, gdb, bzip2, wxGTK31, autoconf, coreutils, xorg, wrapGAppsHook
+{
+  lib,
+  stdenv,
+  fetchurl,
+  pkg-config,
+  zlib,
+  libnotify,
+  openssl,
+  gtk3,
+  clang,
+  gdb,
+  bzip2,
+  wxGTK31,
+  autoconf,
+  coreutils,
+  xorg,
+  wrapGAppsHook3,
 }:
 
 with lib;
 
 stdenv.mkDerivation rec {
   name = "upp";
-  #yearver= "2024.1.1";
-  #version = "17799";
-  version = "17867";
+  #yearver= "2025.1.1";
+  #version = "17810";
+  version = "18518";
   pname = "upp";
 
   src = fetchurl {
-   url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
+    url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
     #url = "https://sourceforge.net/projects/${pname}/files/${pname}/${yearver}/${pname}-posix-${version}.tar.xz";
-    #sha256 = "sha256-b7kdZxTXFZRjd475Q38U8KWAxCD1VWdy5OFq6jPlHRc=";
-   sha256 = "sha256-6gEdnYzOWpT75gtQuBt9j58Mtxz2tMT7/87vMNcmcFw=";
+    sha256 = "sha256-buPLUTwLkyVbI8l7hsJcm8nWIp4MXB+CLa6g5AvvedQ=";
   };
 
   postPatch = ''
-    
+
     sed -ie "s|/usr/|${coreutils}/|" ./uppsrc/Core/Util.cpp
     sed -ie "s|/usr/|${coreutils}/|" ./uppsrc/Core/Speller.cpp
     sed -ie "s|/usr/|${coreutils}/|" ./uppsrc/CtrlLib/FileSel.cpp
@@ -33,49 +47,61 @@ stdenv.mkDerivation rec {
     patchShebangs .
   '';
 
-  nativeBuildInputs = [ autoconf pkg-config clang wrapGAppsHook ];
-  buildInputs = [ xorg.libXdmcp wxGTK31 gtk3 openssl libnotify];
+  nativeBuildInputs = [
+    autoconf
+    pkg-config
+    clang
+    wrapGAppsHook3
+  ];
+  buildInputs = [
+    xorg.libXdmcp
+    wxGTK31
+    gtk3
+    openssl
+    libnotify
+  ];
 
-  makeFlags = ["prefix=$(out)"
-              "DATA_PATH=$(prefix)/share/${pname}"
-            ];  
- 
- buildPhase = ''
-    #cd ./upp
-     ./configure
-     make -f umkMakefile -j 4
-    ./umk ./uppsrc ide CLANG -brs ./theide
-    ./umk ./uppsrc umk CLANG -brs ./umk
-   
-        ### # theide specific settings
-  install -D "./uppsrc/ide/theide.1" "$out/share/man/man1/theide.1"
-  # desktop entry
-  install -D "./uppsrc/ide/theide.desktop" "$out/share/applications/theide.desktop"
-  # icon
-  install -D "./uppsrc/ide/icon64x64.png" "$out/share/pixmaps/theide.png"
-  #install -D "./uppsrc/ide/theide-48.png" "$out/share/pixmaps/theide.png"
-  # fix permissions
-  #find "$out/" -print0 | xargs -0 chown root:root
-  #find "$out/" -type f -print0 | xargs -0 chmod 644
-  #find "$out/" -type d -print0 | xargs -0 chmod 755
-  # install applications
-  install -D "./theide" "$out/bin/theide"
-  
-     #### umk specific settings
-   install -D "./uppsrc/umk/umk.1" "$out/share/man/man1/umk.1"
-   install -D "./umk" "$out/bin/umk"
-   
-     #### # upp specific settings
-  mkdir -p "$out/share/upp"
-  cp -r "./"{examples,reference,tutorial,uppsrc} "$out/share/upp/"
-  echo "#define IDE_VERSION \"${version}-Arch\"" > "$out/share/upp/uppsrc/ide/version.h"    
-   
-    '';
- 
+  makeFlags = [
+    "prefix=$(out)"
+    "DATA_PATH=$(prefix)/share/${pname}"
+  ];
+
+  buildPhase = ''
+      #cd ./upp
+       ./configure
+       make -f umkMakefile -j 4
+      ./umk ./uppsrc ide CLANG -brs ./theide
+      ./umk ./uppsrc umk CLANG -brs ./umk
+     
+          ### # theide specific settings
+    install -D "./uppsrc/ide/theide.1" "$out/share/man/man1/theide.1"
+    # desktop entry
+    install -D "./uppsrc/ide/theide.desktop" "$out/share/applications/theide.desktop"
+    # icon
+    install -D "./uppsrc/ide/icon64x64.png" "$out/share/pixmaps/theide.png"
+    #install -D "./uppsrc/ide/theide-48.png" "$out/share/pixmaps/theide.png"
+    # fix permissions
+    #find "$out/" -print0 | xargs -0 chown root:root
+    #find "$out/" -type f -print0 | xargs -0 chmod 644
+    #find "$out/" -type d -print0 | xargs -0 chmod 755
+    # install applications
+    install -D "./theide" "$out/bin/theide"
+
+       #### umk specific settings
+     install -D "./uppsrc/umk/umk.1" "$out/share/man/man1/umk.1"
+     install -D "./umk" "$out/bin/umk"
+     
+       #### # upp specific settings
+    mkdir -p "$out/share/upp"
+    cp -r "./"{examples,reference,tutorial,uppsrc} "$out/share/upp/"
+    echo "#define IDE_VERSION \"${version}-Arch\"" > "$out/share/upp/uppsrc/ide/version.h"    
+     
+  '';
+
   enableParallelBuilding = true;
-  
- meta = {
-    maintainers = [  ];
+
+  meta = {
+    maintainers = [ ];
     platforms = platforms.linux;
     description = "Radical and innovative multiplatform C++ framework (known as U++) IDE";
     homepage = "http://www.ultimatepp.org";
