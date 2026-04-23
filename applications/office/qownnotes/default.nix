@@ -1,28 +1,36 @@
-{ lib
-, stdenv
-, fetchurl
-, cmake
-, qt6Packages
-, makeWrapper
-, botan2
-, pkg-config
-, nixosTests
-, installShellFiles
-, xvfb-run
+{
+  lib,
+  stdenv,
+  fetchurl,
+  cmake,
+  qt6Packages,
+  makeWrapper,
+  fontconfig,
+  botan3,
+  pkg-config,
+  nixosTests,
+  installShellFiles,
+  xvfb-run,
 }:
 
 let
   pname = "qownnotes";
   appname = "QOwnNotes";
-  version = "25.5.3";
+  version = "26.4.20";
 in
 stdenv.mkDerivation {
   inherit pname version;
 
   src = fetchurl {
     url = "https://github.com/pbek/QOwnNotes/releases/download/v${version}/qownnotes-${version}.tar.xz";
-    hash = "sha256-853xxUgRMtnL+frLCmzzGL44xstDwnrEMhYBFpL5hmQ=";
+    hash = "sha256-bTFm4KUCIMvampKynIQS1jI2fxQ3UMH4GkIVTn8qnmM=";
   };
+
+  # fix: 'Fontconfig error: Cannot load default config file: No such file: (null)'
+  env.FONTCONFIG_FILE = "${fontconfig.out}/etc/fonts/fonts.conf";
+
+  # Fontconfig error: No writable cache directories
+  preBuild = "export XDG_CACHE_HOME=$(mktemp -d)";
 
   nativeBuildInputs = [
     cmake
@@ -30,15 +38,18 @@ stdenv.mkDerivation {
     qt6Packages.wrapQtAppsHook
     pkg-config
     installShellFiles
-  ] ++ lib.optionals stdenv.hostPlatform.isLinux [ xvfb-run ] ++ lib.optionals stdenv.hostPlatform.isDarwin [ makeWrapper ];
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [ xvfb-run ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [ makeWrapper ];
 
   buildInputs = [
     qt6Packages.qtbase
     qt6Packages.qtdeclarative
     qt6Packages.qtsvg
     qt6Packages.qtwebsockets
-    botan2
-  ] ++ lib.optionals stdenv.hostPlatform.isLinux [ qt6Packages.qtwayland ];
+    botan3
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [ qt6Packages.qtwayland ];
 
   cmakeFlags = [
     "-DQON_QT6_BUILD=ON"
@@ -46,33 +57,34 @@ stdenv.mkDerivation {
   ];
 
   # Install shell completion on Linux (with xvfb-run)
-  postInstall = lib.optionalString stdenv.hostPlatform.isLinux ''
+  postInstall =
+    lib.optionalString stdenv.hostPlatform.isLinux ''
       installShellCompletion --cmd ${appname} \
         --bash <(xvfb-run $out/bin/${appname} --completion bash) \
         --fish <(xvfb-run $out/bin/${appname} --completion fish)
       installShellCompletion --cmd ${pname} \
         --bash <(xvfb-run $out/bin/${appname} --completion bash) \
         --fish <(xvfb-run $out/bin/${appname} --completion fish)
-  ''
-  # Install shell completion on macOS
-  + lib.optionalString stdenv.isDarwin ''
+    ''
+    # Install shell completion on macOS
+    + lib.optionalString stdenv.isDarwin ''
       installShellCompletion --cmd ${pname} \
         --bash <($out/bin/${appname} --completion bash) \
         --fish <($out/bin/${appname} --completion fish)
-  ''
-  # Create a lowercase symlink for Linux
-  + lib.optionalString stdenv.hostPlatform.isLinux ''
-    ln -s $out/bin/${appname} $out/bin/${pname}
-  ''
-  # Rename application for macOS as lowercase binary
-  + lib.optionalString stdenv.hostPlatform.isDarwin ''
-    # Prevent "same file" error
-    mv $out/bin/${appname} $out/bin/${pname}.bin
-    mv $out/bin/${pname}.bin $out/bin/${pname}
-  '';
+    ''
+    # Create a lowercase symlink for Linux
+    + lib.optionalString stdenv.hostPlatform.isLinux ''
+      ln -s $out/bin/${appname} $out/bin/${pname}
+    ''
+    # Rename application for macOS as lowercase binary
+    + lib.optionalString stdenv.hostPlatform.isDarwin ''
+      # Prevent "same file" error
+      mv $out/bin/${appname} $out/bin/${pname}.bin
+      mv $out/bin/${pname}.bin $out/bin/${pname}
+    '';
 
-  # Fontconfig error: No writable cache directories
-    preBuild = "export XDG_CACHE_HOME=$(mktemp -d)";
+  # Qt depends on a UTF-8 locale, and has switched to "C.UTF-8" instead.
+  LANG = "C.UTF-8";
 
   # Tests QOwnNotes using the NixOS module by launching xterm:
   passthru.tests.basic-nixos-module-functionality = nixosTests.qownnotes;
@@ -83,7 +95,10 @@ stdenv.mkDerivation {
     changelog = "https://www.qownnotes.org/changelog.html";
     downloadPage = "https://github.com/pbek/QOwnNotes/releases/tag/v${version}";
     license = licenses.gpl2Only;
-    maintainers = with maintainers; [ pbek totoroot ];
+    maintainers = with maintainers; [
+      pbek
+      totoroot
+    ];
     platforms = platforms.unix;
   };
 }

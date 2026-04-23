@@ -23,13 +23,13 @@ stdenv.mkDerivation rec {
   name = "upp";
   #yearver= "2025.1.1";
   #version = "17810";
-  version = "18518";
+  version = "18522";
   pname = "upp";
 
   src = fetchurl {
     url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
     #url = "https://sourceforge.net/projects/${pname}/files/${pname}/${yearver}/${pname}-posix-${version}.tar.xz";
-    sha256 = "sha256-buPLUTwLkyVbI8l7hsJcm8nWIp4MXB+CLa6g5AvvedQ=";
+    sha256 = "sha256-kso6L5xBRAloczeECECQjEqVXZg3iMI41EtVZWUecgs=";
   };
 
   postPatch = ''
