@@ -16,14 +16,14 @@
 let
   pname = "qownnotes";
   appname = "QOwnNotes";
-  version = "26.4.20";
+  version = "26.4.24";
 in
 stdenv.mkDerivation {
   inherit pname version;
 
   src = fetchurl {
     url = "https://github.com/pbek/QOwnNotes/releases/download/v${version}/qownnotes-${version}.tar.xz";
-    hash = "sha256-bTFm4KUCIMvampKynIQS1jI2fxQ3UMH4GkIVTn8qnmM=";
+    hash = "sha256-9l+rCo8qu0vl5ZqKTMwcC6I6CMNM6RRLHsqUmgWf+7A=";
   };
 
   # fix: 'Fontconfig error: Cannot load default config file: No such file: (null)'

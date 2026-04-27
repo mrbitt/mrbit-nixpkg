@@ -1,20 +1,21 @@
-{ lib
-, stdenv
-, fetchurl
-, cmake
-, qttools
-, qtbase
-, qtdeclarative
-, qtsvg
-, qtwayland
-, qtwebsockets
-, makeWrapper
-, wrapQtAppsHook
-, botan2
-, pkg-config
-, nixosTests
-, installShellFiles
-, xvfb-run
+{
+  lib,
+  stdenv,
+  fetchurl,
+  cmake,
+  qttools,
+  qtbase,
+  qtdeclarative,
+  qtsvg,
+  qtwayland,
+  qtwebsockets,
+  makeWrapper,
+  wrapQtAppsHook,
+  botan2,
+  pkg-config,
+  nixosTests,
+  installShellFiles,
+  xvfb-run,
 }:
 
 let
@@ -37,7 +38,8 @@ stdenv.mkDerivation {
     pkg-config
     installShellFiles
     xvfb-run
-  ] ++ lib.optionals stdenv.isDarwin [ makeWrapper ];
+  ]
+  ++ lib.optionals stdenv.isDarwin [ makeWrapper ];
 
   buildInputs = [
     qtbase
@@ -45,7 +47,8 @@ stdenv.mkDerivation {
     qtsvg
     qtwebsockets
     botan2
-  ] ++ lib.optionals stdenv.isLinux [ qtwayland ];
+  ]
+  ++ lib.optionals stdenv.isLinux [ qtwayland ];
 
   cmakeFlags = [
     "-DQON_QT6_BUILD=ON"
@@ -80,7 +83,10 @@ stdenv.mkDerivation {
     changelog = "https://www.qownnotes.org/changelog.html";
     downloadPage = "https://github.com/pbek/QOwnNotes/releases/tag/v${version}";
     license = licenses.gpl2Only;
-    maintainers = with maintainers; [ pbek totoroot ];
+    maintainers = with maintainers; [
+      pbek
+      totoroot
+    ];
     platforms = platforms.unix;
   };
 }
