@@ -15,22 +15,28 @@
   libadwaita,
   gtksourceview5,
   openssl,
+  python313,
+  gtk4,
+  shared-mime-info,
+  glib,
+  hicolor-icon-theme,
+  pango,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "cartero";
-  version = "0.2.2";
+  version = "26.0";
 
   src = fetchFromGitHub {
     owner = "danirod";
     repo = "cartero";
     rev = "refs/tags/v${finalAttrs.version}";
-    hash = "sha256-WQ1pGAIFOwXZ+cokHTBPkFrTGikqpEYxK7J5LFqoeH0=";
+    hash = "sha256-EBQqJuIcgpLtRu5DcAaWnCiFyiuuG+DCkdAWsoWwn3E=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname version src;
-    hash = "sha256-vmpBZqRo3Wc7E1d/UzZWDfV96cI9WaSykdxEOTN9KvU=";
+    hash = "sha256-Te6foGMcy8q0u6wn/D4RkhoOEjke5HTv3xxaS2EbiIE=";
   };
 
   nativeBuildInputs = [
@@ -44,14 +50,25 @@ stdenv.mkDerivation (finalAttrs: {
     wrapGAppsHook4
     desktop-file-utils
     libxml2 # xmllint
+    python313
+    gtk4
+    shared-mime-info
+    glib
+    hicolor-icon-theme
   ];
 
   buildInputs = [
     libadwaita
     gtksourceview5
     openssl
+    pango
+    libadwaita
   ];
 
+   postPatch = ''
+    patchShebangs --build build-aux/gen-version.py
+  '';
+    
   meta = {
     description = "Make HTTP requests and test APIs";
     longDescription = ''
