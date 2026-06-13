@@ -7,13 +7,14 @@
   libnotify,
   openssl,
   gtk3,
-  clang,
+ # clang,
+  llvmPackages_21, # Scegliamo la versione  che è stabile e compatibile
   gdb,
   bzip2,
-  wxGTK31,
+  wxwidgets_3_3,
   autoconf,
   coreutils,
-  xorg,
+  libxdmcp,
   wrapGAppsHook3,
 }:
 
@@ -23,16 +24,23 @@ stdenv.mkDerivation rec {
   name = "upp";
   #yearver= "2025.1.1";
   #version = "17810";
-  version = "18539";
+  version = "18574";
   pname = "upp";
 
   src = fetchurl {
     url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
     #url = "https://sourceforge.net/projects/${pname}/files/${pname}/${yearver}/${pname}-posix-${version}.tar.xz";
-    sha256 = "sha256-rf5SPOUpQqgn5qXRcGEbNdnUqwfjzK1jO6pZt5Kqs50=";
+    sha256 = "sha256-+839PsemsOdb99jrfWebGPRxiTN7LJ1iNypF1QV5rO4=";
   };
 
   postPatch = ''
+ #   substituteInPlace uppsrc/CtrlCore/CtrlCore.h \
+ #     --replace-fail "typedef Ctrl CLASSNAME;" "typedef Ctrl CLASSNAME; void WndScrollView(const Rect& r, int dx, int dy); void SyncScroll();"
+    # Forza la definizione di CX_CXXInvalidAccessSpecifier nel caso in cui l'ambiente umk non trovi l'header corretto
+    # sed -i '129i #ifndef CX_CXXInvalidAccessSpecifier\n#define CX_CXXInvalidAccessSpecifier 0\n#endif' ./uppsrc/ide/clang/clang.h
+   
+    cp ${llvmPackages_21.libclang.dev}/include/clang-c/*.h ./uppsrc/ide/clang/
+    cp ${llvmPackages_21.libclang.dev}/include/clang-c/Index.h ./uppsrc/ide/clang/libclang.h
 
     sed -ie "s|/usr/|${coreutils}/|" ./uppsrc/Core/Util.cpp
     sed -ie "s|/usr/|${coreutils}/|" ./uppsrc/Core/Speller.cpp
@@ -50,16 +58,26 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     autoconf
     pkg-config
-    clang
+    llvmPackages_21.clang 
+    #clang
     wrapGAppsHook3
   ];
   buildInputs = [
-    xorg.libXdmcp
-    wxGTK31
+    libxdmcp
+    wxwidgets_3_3
     gtk3
+    llvmPackages_21.libclang     # Forniscxe le librerie dinamiche (.so)
+    llvmPackages_21.libclang.dev
     openssl
     libnotify
   ];
+ 
+  #env.NIX_CFLAGS_COMPILE = "-Wl,--allow-shlib-undefined";
+  env = {
+    #CPATH = "${llvmPackages_21.libclang.dev}/include:${llvmPackages_21.clang}/resource-root/include";
+    #LIBRARY_PATH = "${llvmPackages_21.libclang.lib}/lib";
+    LIBCLANG_PATH = "${llvmPackages_21.libclang.lib}/lib";
+  };
 
   makeFlags = [
     "prefix=$(out)"
@@ -67,6 +85,15 @@ stdenv.mkDerivation rec {
   ];
 
   buildPhase = ''
+   runHook preBuild
+       # 1. Creiamo la HOME fittizia per Fontconfig
+    export HOME=$(mktemp -d)
+    export XDG_CACHE_HOME="$HOME/.cache"
+
+    # 2. Forziamo il linker di NixOS a trovare e iniettare la libreria libclang reale
+    export NIX_LDFLAGS="-L${llvmPackages_21.libclang.lib}/lib -lclang $NIX_LDFLAGS"
+      # export LDFLAGS="-L${llvmPackages_21.libclang.lib}/lib -lclang $LDFLAGS"
+    
       #cd ./upp
        ./configure
        make -f umkMakefile -j 4
@@ -95,7 +122,7 @@ stdenv.mkDerivation rec {
     mkdir -p "$out/share/upp"
     cp -r "./"{examples,reference,tutorial,uppsrc} "$out/share/upp/"
     echo "#define IDE_VERSION \"${version}-Arch\"" > "$out/share/upp/uppsrc/ide/version.h"    
-     
+   runHook postBuild
   '';
 
   enableParallelBuilding = true;

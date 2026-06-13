@@ -23,6 +23,7 @@
   gtk3,
   gtk4,
   libdrm,
+  libgbm,
   libglvnd,
   libkrb5,
   libX11,
@@ -100,80 +101,80 @@ let
   channels = "canary";
   opusWithCustomModes = libopus.override { withCustomModes = true; };
 
-  deps =
-    [
-      alsa-lib
-      at-spi2-atk
-      at-spi2-core
-      atk
-      bzip2
-      cairo
-      coreutils
-      cups
-      curl
-      dbus
-      expat
-      flac
-      fontconfig
-      freetype
-      gcc-unwrapped.lib
-      gdk-pixbuf
-      glib
-      harfbuzz
-      icu
-      libcap
-      libdrm
-      liberation_ttf
-      libexif
-      libglvnd
-      libkrb5
-      libpng
-      libX11
-      libxcb
-      libXcomposite
-      libXcursor
-      libXdamage
-      libXext
-      libXfixes
-      libXi
-      libxkbcommon
-      libXrandr
-      libXrender
-      libXScrnSaver
-      libxshmfence
-      libXtst
-      mesa
-      nspr
-      nss
-      opusWithCustomModes
-      pango
-      pciutils
-      pipewire
-      snappy
-      speechd-minimal
-      systemd
-      util-linux
-      vulkan-loader
-      wayland
-      wget
-    ]
-    ++ lib.optional pulseSupport libpulseaudio
-    ++ lib.optional libvaSupport libva
-    ++ [
-      gtk3
-      gtk4
-    ];
+  deps = [
+    alsa-lib
+    at-spi2-atk
+    at-spi2-core
+    atk
+    bzip2
+    cairo
+    coreutils
+    cups
+    curl
+    dbus
+    expat
+    flac
+    fontconfig
+    freetype
+    gcc-unwrapped.lib
+    gdk-pixbuf
+    glib
+    harfbuzz
+    icu
+    libcap
+    libdrm
+    liberation_ttf
+    libexif
+    libgbm
+    libglvnd
+    libkrb5
+    libpng
+    libX11
+    libxcb
+    libXcomposite
+    libXcursor
+    libXdamage
+    libXext
+    libXfixes
+    libXi
+    libxkbcommon
+    libXrandr
+    libXrender
+    libXScrnSaver
+    libxshmfence
+    libXtst
+    mesa
+    nspr
+    nss
+    opusWithCustomModes
+    pango
+    pciutils
+    pipewire
+    snappy
+    speechd-minimal
+    systemd
+    util-linux
+    vulkan-loader
+    wayland
+    wget
+  ]
+  ++ lib.optional pulseSupport libpulseaudio
+  ++ lib.optional libvaSupport libva
+  ++ [
+    gtk3
+    gtk4
+  ];
 
   linux = stdenv.mkDerivation (finalAttrs: {
     inherit pname meta passthru;
-    version = "138.0.7152.0";
-      
- # Check for new Linux releases using:
- #curl -sSf https://dl.google.com/linux/chrome/deb/dists/stable/main/binary-amd64/Packages | grep -A1 "Package: google-chrome-canary" | awk '/Version/{print $2}' | cut -d '-' -f1
- 
+    version = "151.0.7884.0";
+
+    # Check for new Linux releases using:
+    #curl -sSf https://dl.google.com/linux/chrome/deb/dists/stable/main/binary-amd64/Packages | grep -A1 "Package: google-chrome-canary" | awk '/Version/{print $2}' | cut -d '-' -f1
+
     src = fetchurl {
       url = "https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-${channels}/google-chrome-${channels}_${finalAttrs.version}-1_amd64.deb";
-      hash = "sha256-gavPFSUCdwCvo6TCmTMY9YeSyczrx4fZpKHchsx7VNw=";
+      hash = "sha256-RFAfFJ5QsnAzTzO29Rg1E1bQlH0Xmsb4+Nt+Cpg5gng=";
     };
 
     # With strictDeps on, some shebangs were not being patched correctly
@@ -191,6 +192,7 @@ let
       glib
       gtk3
       gtk4
+      libgbm
       # needed for GSETTINGS_SCHEMAS_PATH
       gsettings-desktop-schemas
     ];
@@ -206,64 +208,64 @@ let
     binpath = lib.makeBinPath deps;
 
     installPhase = ''
-      runHook preInstall
+       runHook preInstall
 
-      appname=chrome-${channels}
-      dist=canary
+       appname=chrome-${channels}
+       dist=canary
 
-      exe=$out/bin/google-chrome-$dist
+       exe=$out/bin/google-chrome-$dist
 
-      mkdir -p $out/bin $out/share
-      cp -v -a opt/* $out/share
-      cp -v -a usr/share/* $out/share
+       mkdir -p $out/bin $out/share
+       cp -v -a opt/* $out/share
+       cp -v -a usr/share/* $out/share
 
-      # replace bundled vulkan-loader
-      rm -v $out/share/google/$appname/libvulkan.so.1
-      ln -v -s -t "$out/share/google/$appname" "${lib.getLib vulkan-loader}/lib/libvulkan.so.1"
+       # replace bundled vulkan-loader
+       rm -v $out/share/google/$appname/libvulkan.so.1
+       ln -v -s -t "$out/share/google/$appname" "${lib.getLib vulkan-loader}/lib/libvulkan.so.1"
 
-      substituteInPlace $out/share/google/$appname/google-$appname \
-        --replace-fail 'CHROME_WRAPPER' 'WRAPPER'
-      substituteInPlace $out/share/applications/google-$appname.desktop \
-        --replace-fail /usr/bin/google-chrome-$dist $exe
-      substituteInPlace $out/share/gnome-control-center/default-apps/google-$appname.xml \
-        --replace-fail /opt/google/$appname/google-$appname $exe
-      substituteInPlace $out/share/menu/google-$appname.menu \
-        --replace-fail /opt $out/share \
-        --replace-fail $out/share/google/$appname/google-$appname $exe
+       substituteInPlace $out/share/google/$appname/google-$appname \
+         --replace-fail 'CHROME_WRAPPER' 'WRAPPER'
+       substituteInPlace $out/share/applications/google-$appname.desktop \
+         --replace-fail /usr/bin/google-chrome-$dist $exe
+       substituteInPlace $out/share/gnome-control-center/default-apps/google-$appname.xml \
+         --replace-fail /opt/google/$appname/google-$appname $exe
+      # substituteInPlace $out/share/menu/google-$appname.menu \
+      #   --replace-fail /opt $out/share \
+      #   --replace-fail $out/share/google/$appname/google-$appname $exe
 
-      for icon_file in $out/share/google/chrome*/product_logo_[0-9]*.png; do
-        num_and_suffix="''${icon_file##*logo_}"
-        if [ $dist = "stable" ]; then
-          icon_size="''${num_and_suffix%.*}"
-        else
-          icon_size="''${num_and_suffix%_*}"
-        fi
-        logo_output_prefix="$out/share/icons/hicolor"
-        logo_output_path="$logo_output_prefix/''${icon_size}x''${icon_size}/apps"
-        mkdir -p "$logo_output_path"
-        mv "$icon_file" "$logo_output_path/google-$appname.png"
-      done
+       for icon_file in $out/share/google/chrome*/product_logo_[0-9]*.png; do
+         num_and_suffix="''${icon_file##*logo_}"
+         if [ $dist = "stable" ]; then
+           icon_size="''${num_and_suffix%.*}"
+         else
+           icon_size="''${num_and_suffix%_*}"
+         fi
+         logo_output_prefix="$out/share/icons/hicolor"
+         logo_output_path="$logo_output_prefix/''${icon_size}x''${icon_size}/apps"
+         mkdir -p "$logo_output_path"
+         mv "$icon_file" "$logo_output_path/google-$appname.png"
+       done
 
-      # "--simulate-outdated-no-au" disables auto updates and browser outdated popup
-      makeWrapper "$out/share/google/$appname/google-$appname" "$exe" \
-        --prefix LD_LIBRARY_PATH : "$rpath" \
-        --prefix PATH            : "$binpath" \
-        --suffix PATH            : "${lib.makeBinPath [ xdg-utils ]}" \
-        --prefix XDG_DATA_DIRS   : "$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH:${addDriverRunpath.driverLink}/share" \
-        --set CHROME_WRAPPER  "google-chrome-$dist" \
-        --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}" \
-        --add-flags "--simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT'" \
-        --add-flags ${lib.escapeShellArg commandLineArgs}
+       # "--simulate-outdated-no-au" disables auto updates and browser outdated popup
+       makeWrapper "$out/share/google/$appname/google-$appname" "$exe" \
+         --prefix LD_LIBRARY_PATH : "$rpath" \
+         --prefix PATH            : "$binpath" \
+         --suffix PATH            : "${lib.makeBinPath [ xdg-utils ]}" \
+         --prefix XDG_DATA_DIRS   : "$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH:${addDriverRunpath.driverLink}/share" \
+         --set CHROME_WRAPPER  "google-chrome-$dist" \
+         --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}" \
+         --add-flags "--simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT'" \
+         --add-flags ${lib.escapeShellArg commandLineArgs}
 
-      # Make sure that libGL and libvulkan are found by ANGLE libGLESv2.so
-      patchelf --set-rpath $rpath $out/share/google/$appname/lib*GL*
+       # Make sure that libGL and libvulkan are found by ANGLE libGLESv2.so
+       patchelf --set-rpath $rpath $out/share/google/$appname/lib*GL*
 
-      for elf in $out/share/google/$appname/{chrome,chrome-sandbox,chrome_crashpad_handler}; do
-        patchelf --set-rpath $rpath $elf
-        patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $elf
-      done
+       for elf in $out/share/google/$appname/{chrome,chrome-sandbox,chrome_crashpad_handler}; do
+         patchelf --set-rpath $rpath $elf
+         patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $elf
+       done
 
-      runHook postInstall
+       runHook postInstall
     '';
   });
 
