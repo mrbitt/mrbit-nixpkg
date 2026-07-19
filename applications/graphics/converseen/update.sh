@@ -5,10 +5,14 @@ set -eu -o pipefail
 
 #page="$(curl -s https://www.ultimatepp.org/downloads/)"
 version="$(curl -sIL https://sourceforge.net/projects/converseen/files/latest/download | grep -oE 'Converseen-[0-9.]+' | head -n1 | cut -d'-' -f2,2)"
-URL="https://sourceforge.net/projects/converseen/files/Converseen/Converseen%200.15/conversee-${version}.tar.bz2"
-hash=$(nix --extra-experimental-features nix-command hash convert --to sri --hash-algo sha256 $(nix-prefetch-url $URL))
+#URL="https://sourceforge.net/projects/converseen/files/Converseen/Converseen%200.15/conversee-${version}.tar.bz2"
 
+major_minor=$(echo "$version" | cut -d'.' -f1,2)
+URL="https://sourceforge.net/projects/converseen/files/Converseen/Converseen ${major_minor}/converseen-${version}-1.tar.bz2"
 
+hash=$(nix-prefetch-url "$URL" | xargs nix --extra-experimental-features nix-command hash convert --to sri --hash-algo sha256)
+
+#hash=$(nix --extra-experimental-features nix-command hash convert --to sri --hash-algo sha256 $(nix-prefetch-url $URL))
 
 sed -i default.nix \
     -e "/^  version =/ s|\".*\"|\"$version\"|" \

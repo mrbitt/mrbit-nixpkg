@@ -1,4 +1,9 @@
-{ lib, stdenv, fetchurl, unzip }:
+{
+  lib,
+  stdenv,
+  fetchurl,
+  unzip,
+}:
 
 stdenv.mkDerivation {
   pname = "perseus";
@@ -13,9 +18,28 @@ stdenv.mkDerivation {
   };
 
   sourceRoot = ".";
- 
-  NIX_CFLAGS_COMPILE = [ "-std=c++14" ];  
- 
+
+  NIX_CFLAGS_COMPILE = [ "-std=c++14" ];
+
+ postPatch = ''
+   # 1. Correzione per ptcomplex in Cells/Point.h
+  substituteInPlace Cells/Point.h \
+    --replace-fail "bool operator ()(Point<PS>* p, Point<PS>* q)" "bool operator ()(Point<PS>* p, Point<PS>* q) const"
+
+  # 2. Correzione per decnum in Global/Combinatorics.h
+  if [ -f Global/Combinatorics.h ]; then
+    substituteInPlace Global/Combinatorics.h \
+      --replace-fail "bool operator() (num n1, num n2)" "bool operator() (num n1, num n2) const"
+  elif [ -f Global/Combinatorics.hpp ]; then
+    substituteInPlace Global/Combinatorics.hpp \
+      --replace-fail "bool operator() (num n1, num n2)" "bool operator() (num n1, num n2) const"
+  fi
+
+  # 3. Correzione per addcomp in Complexes/CToplex.h (Risolve l'errore corrente)
+  substituteInPlace Complexes/CToplex.h \
+    --replace-fail "bool operator () (vector<num>* v1, vector<num>* v2)" "bool operator () (vector<num>* v1, vector<num>* v2) const"
+ '';
+
   buildPhase = ''
     g++ Pers.cpp -O3 -fpermissive -o perseus
   '';
