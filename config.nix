@@ -8,12 +8,28 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    frozen-bubble = callPackage ./games/frozen-bubble { };
+    impression = callPackage ./applications/misc/impression { };
+    balena-etcher = callPackage ./tools/system/balen-etcher { };
+    gitfiend = callPackage ./applications/version-management/gitfiend { };
+    gitte = callPackage ./applications/version-management/gitte { };
+    letters = callPackage ./applications/editors/letters { };
+    akizip  = callPackage ./tools/misc/akizip { };
+    ferrite = callPackage ./applications/editors/ferrite { };
+    censor  = callPackage ./applications/graphics/censor { };
+    pencil2d = ./applications/graphics/pencil2d { };
+    mystiq = callPackage ./applications/graphics/mystiq { };
+    playonlinux = callPackage ./applications/misc/playonlinux { stdenv = stdenv_32bit; };
+    boxbuddy = callPackage ./tools/system/boxbuddy { };
+    distroshelf = callPackage ./tools/system/distroshelf { };
+    denise = callPackage ./tools/misc/denise { };
+    gnome-encfs-manager = callPackage ./tools/system/gencfsm { };
     mfcl2827dw = callPackage ./tools/system/cups-brother-mfcl2827dw { };
     toppler = callPackage ./games/toppler { };
     rocksndiamonds = callPackage ./games/rocksndiamonds { };
     delineate = callPackage ./development/delineate {};
     qmplay2 = callPackage /applications/video/qmplay2 { qtVersion = "6";};
-    leafpad =./applications/editors/leafpad { };
+    leafpad =callPackage ./applications/editors/leafpad { };
     #l3afpad =./applications/editors/l3afpad { };
     ffaudioconverter = libsForQt5.callPackage ./applications/audio/ffaudioconverter { };
     opensurge = callPackage ./games/opensurge { };
@@ -35,6 +51,7 @@
     hurrican = callPackage ./games/hurrican {};
     app-icon-preview = callPackage ./tools/misc/app-icon-preview {};
     textpieces = callPackage ./tools/misc/textpieces {};
+    curtail = callPackage ./applications/graphics/curtail { };
     converseen = libsForQt5.callPackage ./applications/graphics/converseen { };
     krita = libsForQt5.callPackage ./applications/graphics/krita { };
     notepadqq = libsForQt5.callPackage ./applications/editors/notepadqq { };
@@ -84,7 +101,11 @@
     gkrellm2 = pkgs.callPackage ./gkrellm2 {};
     xdiskusage = pkgs.callPackage ./xdiskusage {};
     tinyproxy = pkgs.callPackage ./tinyproxy {};
-    #rtl8822bu = pkgs.callPackage ./rtl8822bu { inherit (pkgs.linuxPackages ) kernel ; };
+    rtl8822bu = pkgs.callPackage ./rtl8822bu { inherit (pkgs.linuxPackages_6_18 ) kernel ; };
+    rtl8852bu = pkgs.callPackage ./rtl8822bu { inherit (pkgs.linuxPackages_6_18 ) kernel ; };
+    onlyoffice-desktopeditors = callPackage ./applications/office/onlyoffice-desktopeditors { };
+    cortex-command-community-project = ./games/cortex-command-community-project {};
+    alpaca = callPackage ./applications/misc/alpaca { };
     #curabylonger = libsForQt5.callPackage ./applications/misc/curabylonger { };
     #pynest2d = python3Packages.callPackage ../development/python-modules/pynest2d { };
     
