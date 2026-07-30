@@ -1,4 +1,18 @@
-{ lib, stdenv, fetchurl, autoreconfHook, pkg-config, gtk2, freetype, libpng, SDL2, SDL2_image, SDL2_mixer, SDL2_ttf, }:
+{
+  lib,
+  stdenv,
+  fetchurl,
+  autoreconfHook,
+  pkg-config,
+  gtk2,
+  freetype,
+  libpng,
+  SDL2,
+  libGLU,
+  SDL2_image,
+  SDL2_mixer,
+  SDL2_ttf,
+}:
 
 stdenv.mkDerivation rec {
   pname = "goatattack";
@@ -9,7 +23,7 @@ stdenv.mkDerivation rec {
     sha256 = "sha256-zFg8vCGCY4PQ/L7Kc1SnfuUMAcAcnSuIZ/1NIGtbZEY=";
   };
 
-    configureFlags = [
+  configureFlags = [
     "--enable-map-editor=yes"
     "--enable-non-free-pak=yes"
     "--enable-master-server=yes"
@@ -18,10 +32,20 @@ stdenv.mkDerivation rec {
   ];
 
   env.NIX_CFLAGS_COMPILE = "-I${lib.getDev SDL2}/include/SDL2";
-  
-  nativeBuildInputs = [ autoreconfHook pkg-config ];
-  buildInputs = [ gtk2 freetype libpng SDL2 SDL2_mixer];
-      
+
+  nativeBuildInputs = [
+    autoreconfHook
+    pkg-config
+  ];
+  buildInputs = [
+    gtk2
+    freetype
+    libpng
+    libGLU
+    SDL2
+    SDL2_mixer
+  ];
+
   hardeningDisable = [ "format" ];
   enableParallelBuilding = true;
 
