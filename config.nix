@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    goatattack = callPackage ./games/goatattack { };
     frozen-bubble = callPackage ./games/frozen-bubble { };
     impression = callPackage ./applications/misc/impression { };
     balena-etcher = callPackage ./tools/system/balen-etcher { };
