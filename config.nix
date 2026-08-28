@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    abe = callPackage ./games/abe-re { };
     chaski-bin = callPackage ./tools/system/chaski-bin { };
     goatattack = callPackage ./games/goatattack { };
     frozen-bubble = callPackage ./games/frozen-bubble { };
