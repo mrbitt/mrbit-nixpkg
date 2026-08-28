@@ -14,6 +14,7 @@
   cpio,
   libayatana-appindicator,
   copyDesktopItems,
+  makeDesktopItem,
 }:
 
 stdenv.mkDerivation rec {
@@ -45,6 +46,20 @@ stdenv.mkDerivation rec {
     libX11
     libdbusmenu-gtk3
     libayatana-appindicator
+  ];
+
+  # 1. Programmatically define a dedicated desktop item profile matrix
+  desktopItems = [
+    (makeDesktopItem {
+      name = "chaski-app";
+      exec = "chaski-app";
+      icon = "chaski";
+      comment = "A calmer way to read the web (RSS/Atom Client)";
+      desktopName = "Chaski App";
+      genericName = "Feed Aggregator";
+      categories = [ "Network" "News" ];
+      keywords = [ "RSS" "Atom" "Feed" "Reader" ];
+    })
   ];
 
  # 2. Tell autoPatchelfHook to bundle dynamic-loaded libraries inside the runtime RPATH
