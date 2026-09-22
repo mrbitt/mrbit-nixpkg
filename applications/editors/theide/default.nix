@@ -24,13 +24,13 @@ stdenv.mkDerivation rec {
   name = "upp";
   #yearver= "2025.1.1";
   #version = "17810";
-  version = "18612";
+  version = "18717";
   pname = "upp";
 
   src = fetchurl {
     url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
     #url = "https://sourceforge.net/projects/${pname}/files/${pname}/${yearver}/${pname}-posix-${version}.tar.xz";
-    sha256 = "sha256-GO2Zl1an+/DXB4fpIojnetjeV2KFt78W1tDL46lN6D4=";
+    sha256 = "sha256-C1PxZFrBiAglg3m3/ypFJmcSn8mT5ZEfcNmLtHlDBRI=";
   };
 
   postPatch = ''
@@ -38,6 +38,11 @@ stdenv.mkDerivation rec {
  #     --replace-fail "typedef Ctrl CLASSNAME;" "typedef Ctrl CLASSNAME; void WndScrollView(const Rect& r, int dx, int dy); void SyncScroll();"
     # Forza la definizione di CX_CXXInvalidAccessSpecifier nel caso in cui l'ambiente umk non trovi l'header corretto
     # sed -i '129i #ifndef CX_CXXInvalidAccessSpecifier\n#define CX_CXXInvalidAccessSpecifier 0\n#endif' ./uppsrc/ide/clang/clang.h
+   
+    # Fix the ambiguous conversion error in Methods.cpp for version 18625
+   # substituteInPlace ./uppsrc/ide/Methods.cpp \
+   #   --replace-fail "CreateHost(host, clang_method, false, false, 0);" "CreateHost(host, !clang_method.IsEmpty(), false, false, 0);"
+
    
     cp ${llvmPackages_21.libclang.dev}/include/clang-c/*.h ./uppsrc/ide/clang/
     cp ${llvmPackages_21.libclang.dev}/include/clang-c/Index.h ./uppsrc/ide/clang/libclang.h
