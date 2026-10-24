@@ -15,11 +15,6 @@
   autoconf,
   coreutils,
   libxdmcp,
-  pcre2,
-  lz4,
-  zstd,
-  xz,
-  xxhash,
   wrapGAppsHook3,
 }:
 
@@ -29,13 +24,13 @@ stdenv.mkDerivation rec {
   name = "upp";
   #yearver= "2025.1.1";
   #version = "17810";
-  version = "18761";
+  version = "18736";
   pname = "upp";
 
   src = fetchurl {
     url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
     #url = "https://sourceforge.net/projects/${pname}/files/${pname}/${yearver}/${pname}-posix-${version}.tar.xz";
-    sha256 = "sha256-AA2v6pW6Td+Y2ScWoVfpPo+fJzuy/klt5FahvxYJ074=";
+    sha256 = "sha256-fDp9vNLKl15c0rlNtHA26AZM9LRKIOGCiYyP8+mYww4=";
   };
 
   postPatch = ''

@@ -6,7 +6,7 @@
   glib,
   imagemagick,
   cmake,
-  extra-cmake-modules,
+  kdePackages,
   pkg-config,
   qtbase,
   qttools,
@@ -25,11 +25,11 @@ in
 
 stdenv.mkDerivation rec {
   pname = "converseen";
-  version = "0.15.2.3";
+  version = "0.15.2.7";
 
   src = fetchurl {
     url = "https://sourceforge.net/projects/converseen/files/Converseen/Converseen%200.15/${pname}-${version}.tar.bz2";
-    hash = "sha256-4whtrDLCQNOawFe8GYAvvcvVttugJttJ0g7qCd4rDBg=";
+    hash = "sha256-Lbpey8iW+QqZfRJQTbJUC+kMNsSanKRi+5yEoU+zaOk=";
   };
 
   #doCheck = false;
@@ -60,7 +60,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     imagemagick
     cmake
-    extra-cmake-modules
+    kdePackages.extra-cmake-modules
     qttools
     pkg-config
     wrapQtAppsHook

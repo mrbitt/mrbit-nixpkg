@@ -21,11 +21,11 @@ stdenv.mkDerivation rec {
     sha256 = "sha256-ZgYx6ObIm3FXovSFJYrQ0yOhSPm0pwSQObl7xEIL25o=";
   };
   # patches = [./wmhdplop-0.9.10-sysmacros.patch];
-  patches = [./wmhdplop-0.9.10-cflags.patch];
-  
+  # patches = [./wmhdplop-0.9.10-cflags.patch];
+  patches = [./wmhdplop-0.9.12-configure.patch];
 
   nativeBuildInputs = [ pkg-config automake autoconf ];
-  buildInputs = [
+  buildInputs = [ 
     imlib2
     gkrellm
     glib
@@ -33,8 +33,8 @@ stdenv.mkDerivation rec {
     libX11
     libXtst
   ];
-
-  # Use ellipses (...) to allow functions to take both 0 and 1 arguments safely
+  
+ # Use ellipses (...) to allow functions to take both 0 and 1 arguments safely
   postPatch = ''
     substituteInPlace wmhdplop.c \
       --replace "void next_displayed_hd()" "void next_displayed_hd(...)" \
@@ -49,14 +49,14 @@ stdenv.mkDerivation rec {
 
   #postPatch = '' sed -e '/gkhdplop_so_LDFLAGS/s, -Wl , ,' -i Makefile.in '';
 
-  
     # Force-regenerate build configuration files to prevent aclocal failures after patching
   preConfigure = '' autoreconf -vfi '';
 
 # Downgrade only the GTK2 pointer mismatches without breaking GCC command validation
   NIX_CFLAGS_COMPILE = [ "-Wno-error=incompatible-pointer-types" ];
 
-  installPhase = ''
+
+ installPhase = ''
               mkdir -p $out/gkrellm2/plugins/ $out/bin
               cp *.so $out/gkrellm2/plugins/
     #          substituteAll "${./gkrellm-hdplop.sh}" "$out/bin/gkhdplop"
@@ -66,8 +66,8 @@ stdenv.mkDerivation rec {
               strip --strip-all $out/gkrellm2/plugins/*.so '';
 
   enableParallelBuilding = true;
-
-  meta = with lib; {
+  
+   meta = with lib; {
     description = "Monitors your hard drives and displays visual information about their activity (read, write, swapin, swapout), 
                      and optionally (if hddtemp is running as a daemon), displays their temperature/status. ";
     homepage = "https://www.dockapps.net/wmhdplop";

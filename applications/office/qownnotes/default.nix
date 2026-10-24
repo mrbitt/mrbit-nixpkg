@@ -5,25 +5,27 @@
   cmake,
   qt6Packages,
   makeWrapper,
+  libgit2,
   fontconfig,
   botan3,
   pkg-config,
   nixosTests,
   installShellFiles,
   xvfb-run,
+  aspell,
 }:
 
 let
   pname = "qownnotes";
   appname = "QOwnNotes";
-  version = "26.10.11";
+  version = "26.10.6";
 in
 stdenv.mkDerivation {
   inherit pname version;
 
   src = fetchurl {
     url = "https://github.com/pbek/QOwnNotes/releases/download/v${version}/qownnotes-${version}.tar.xz";
-    hash = "sha256-xGDfTNTKWM/RQ22YhLjyO7w/pXhbkdrSo5xVfb7aRSQ=";
+    hash = "sha256-/CY3RCpckheMM9GZphmD4TTA+NPT1uECmKzT0xfLoTU=";
   };
 
   # fix: 'Fontconfig error: Cannot load default config file: No such file: (null)'
@@ -48,12 +50,16 @@ stdenv.mkDerivation {
     qt6Packages.qtsvg
     qt6Packages.qtwebsockets
     botan3
+    libgit2
+    aspell
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [ qt6Packages.qtwayland ];
 
   cmakeFlags = [
     "-DQON_QT6_BUILD=ON"
     "-DBUILD_WITH_SYSTEM_BOTAN=ON"
+     "-DBUILD_WITH_LIBGIT2=ON"
+    "-DBUILD_WITH_ASPELL=ON"
   ];
 
   # Install shell completion on Linux (with xvfb-run)

@@ -1,0 +1,15 @@
+ddiff -u a/uppsrc/CtrlCore/CtrlCore.h b/uppsrc/CtrlCore/CtrlCore.h
+--- a/uppsrc/CtrlCore/CtrlCore.h
++++ b/uppsrc/CtrlCore/CtrlCore.h
+@@ -415,6 +415,9 @@
+ public:
+ 	typedef Ctrl CLASSNAME;
+ 
++	void  WndScrollView(const Rect& r, int dx, int dy);
++	void  SyncScroll();
++
+ 	static void LogPos(const char *s, Ctrl *q);
+ 
+ #ifdef flagRECORD
+
+
