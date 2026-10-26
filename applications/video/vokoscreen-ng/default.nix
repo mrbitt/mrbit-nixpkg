@@ -13,13 +13,13 @@
 
 stdenv.mkDerivation rec {
   pname = "vokoscreen-ng";
-  version = "4.4.0";
+  version = "4.11.0";
 
   src = fetchFromGitHub {
     owner = "vkohaupt";
     repo = "vokoscreenNG";
     tag = version;
-    hash = "sha256-5rESTLIvjc/Jztc7LAPl74fxgDsam9SfBa6B5yTXb8E=";
+    hash = "sha256-asY+FeLxfz2NFB53pCd2FQ+0S8x21bP+uiotnstk+Ao=";
   };
 
   qmakeFlags = [ "src/vokoscreenNG.pro" ];
@@ -36,6 +36,9 @@ stdenv.mkDerivation rec {
     pulseaudio
     qt6.qtbase
     qt6.qtmultimedia
+    qt6.qtwebchannel
+    qt6.qtwebsockets
+    qt6.qtwebengine
     wayland
     pipewire
     gst_all_1.gst-plugins-base
