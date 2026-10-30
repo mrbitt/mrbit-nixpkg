@@ -21,7 +21,7 @@
 , appstream-glib
 , libxml2
 , librsvg
-, wrapGAppsHook
+, wrapGAppsHook3
 }:
 
 stdenv.mkDerivation rec {
@@ -52,7 +52,7 @@ stdenv.mkDerivation rec {
     rustc
     libxml2  
     appstream-glib
-    wrapGAppsHook # For GLib-GIO-ERROR **: 14:42:46.572: Settings schema
+    wrapGAppsHook3 # For GLib-GIO-ERROR **: 14:42:46.572: Settings schema
     ] ++ (with rustPlatform; [
     cargoSetupHook
     librsvg

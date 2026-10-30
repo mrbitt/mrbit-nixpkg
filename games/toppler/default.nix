@@ -12,8 +12,7 @@
   gettext,
   povray,
   imagemagick,
-  gimp,
-
+  gimp2,
   SDL2,
   SDL2_mixer,
   SDL2_image,
@@ -50,7 +49,7 @@ stdenv.mkDerivation (finalAttrs: {
     povray
     imagemagick
     fontconfig
-    gimp 
+    gimp2
     copyDesktopItems
     # GIMP needs a writable home
     writableTmpDirAsHomeHook
@@ -63,14 +62,14 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   patches = [
-      # Based on https://gitlab.com/roever/toppler/-/merge_requests/3
+    # Based on https://gitlab.com/roever/toppler/-/merge_requests/3
     ./gcc14.patch
   ];
 
-    postPatch = ''
-        substituteInPlace Makefile --replace-fail "CONVERT = convert" "CONVERT = magick"
-         '';
-         
+  postPatch = ''
+    substituteInPlace Makefile --replace-fail "CONVERT = convert" "CONVERT = magick"
+  '';
+
   makeFlags = [
     "CXX_NATIVE=$(CXX_FOR_BUILD)"
     "PKG_CONFIG_NATIVE=$(PKG_CONFIG_FOR_BUILD)"
@@ -82,31 +81,38 @@ stdenv.mkDerivation (finalAttrs: {
     makeFlagsArray+=(CXX=$CXX PKG_CONFIG=$PKG_CONFIG);
   '';
 
-   # fix: 'Fontconfig error: Cannot load default config file: No such file: (null)'
+  # fix: 'Fontconfig error: Cannot load default config file: No such file: (null)'
   env.FONTCONFIG_FILE = "${fontconfig.out}/etc/fonts/fonts.conf";
-  
-    # fix: error: XDG_RUNTIME_DIR is invalid or not set in the environment.
-   env.XDG_RUNTIME_DIR = "/tmp";
-  
+
+  # fix: error: XDG_RUNTIME_DIR is invalid or not set in the environment.
+  env.XDG_RUNTIME_DIR = "/tmp";
+
   passthru.updateScript = nix-update-script { };
 
-   postInstall = ''
+  postInstall = ''
     install -Dvm444 $src/dist/toppler.xpm $out/share/pixmaps/toppler.png 
-   '';
-   
-   desktopItems = makeDesktopItem {
-      name = "toppler";
-      exec = "toppler";
-      terminal=false;
-      comment="Climb the rotating towers";
-      desktopName = "Tower Toppler";
-      categories = [ "Game" "ArcadeGame"];
-    };
-  
+  '';
+
+  desktopItems = makeDesktopItem {
+    name = "toppler";
+    exec = "toppler";
+    icon = "toppler";
+    terminal = false;
+    comment = "Climb the rotating towers";
+    desktopName = "Tower Toppler";
+    categories = [
+      "Game"
+      "ArcadeGame"
+    ];
+  };
+
   meta = {
     description = "Jump and run game, reimplementation of Tower Toppler/Nebulus";
     homepage = "https://gitlab.com/roever/toppler";
-    license = with lib.licenses; [gpl2Plus gpl3Plus ];
+    license = with lib.licenses; [
+      gpl2Plus
+      gpl3Plus
+    ];
     maintainers = with lib.maintainers; [ fgaz ];
     platforms = lib.platforms.all;
     mainProgram = "toppler";

@@ -20,7 +20,7 @@
 , desktop-file-utils
 , appstream-glib
 , libxml2
-, wrapGAppsHook
+, wrapGAppsHook3
 , blueprint-compiler
 }:
 
@@ -47,7 +47,7 @@ stdenv.mkDerivation rec {
     vala
     libxml2  
     appstream-glib
-    wrapGAppsHook # For GLib-GIO-ERROR **:  Settings schemas
+    wrapGAppsHook3 # For GLib-GIO-ERROR **:  Settings schemas
     blueprint-compiler
  ];
 

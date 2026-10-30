@@ -167,14 +167,14 @@ let
 
   linux = stdenv.mkDerivation (finalAttrs: {
     inherit pname meta passthru;
-    version = "151.0.7884.0";
+    version = "158.0.8110.0";
 
     # Check for new Linux releases using:
     #curl -sSf https://dl.google.com/linux/chrome/deb/dists/stable/main/binary-amd64/Packages | grep -A1 "Package: google-chrome-canary" | awk '/Version/{print $2}' | cut -d '-' -f1
 
     src = fetchurl {
       url = "https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-${channels}/google-chrome-${channels}_${finalAttrs.version}-1_amd64.deb";
-      hash = "sha256-RFAfFJ5QsnAzTzO29Rg1E1bQlH0Xmsb4+Nt+Cpg5gng=";
+      hash = "sha256-KBtYhfu5Jb2NKsmgze5hdQ+KFNogaAefnymfC2Xg2bI=";
     };
 
     # With strictDeps on, some shebangs were not being patched correctly
@@ -258,11 +258,17 @@ let
          --add-flags ${lib.escapeShellArg commandLineArgs}
 
        # Make sure that libGL and libvulkan are found by ANGLE libGLESv2.so
-       patchelf --set-rpath $rpath $out/share/google/$appname/lib*GL*
-
-       for elf in $out/share/google/$appname/{chrome,chrome-sandbox,chrome_crashpad_handler}; do
-         patchelf --set-rpath $rpath $elf
-         patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $elf
+        for libgl in $out/share/google/$appname/lib*GL* $out/share/google/$appname/Locales/lib*GL*; do
+         if [ -f "$libgl" ]; then
+           patchelf --set-rpath $rpath "$libgl"
+         fi
+        done
+        
+       for elf in $out/share/google/$appname/{chrome,chrome-sandbox,chrome_crashpad_handler,nacl_helper}; do
+         if [ -f "$elf" ] && [ ! -L "$elf" ]; then
+           patchelf --set-rpath $rpath "$elf"
+           patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" "$elf"
+         fi
        done
 
        runHook postInstall

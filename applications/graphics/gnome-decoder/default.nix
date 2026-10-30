@@ -35,7 +35,7 @@ clangStdenv.mkDerivation rec {
     hash = "sha256-B5TtD3SdMBSXMERtxxj+zbmz9BclOY0L8T2xFEI5uEo=";
   };
 
-  cargoDeps = rustPlatform.fetchCargoTarball {
+  cargoDeps = rustPlatform.fetchCargoVendor {
     name = "${version}";
     inherit src;
     hash = "sha256-Yahvty0cYBfJ/ErelrVtmf7xUYVSrSG0Jt5FlSDHjCw=";

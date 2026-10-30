@@ -1,3 +1,4 @@
+
 {
   lib,
   stdenv,
@@ -7,14 +8,20 @@
   libnotify,
   openssl,
   gtk3,
- # clang,
-  llvmPackages_21, # Scegliamo la versione  che è stabile e compatibile
+  llvmPackages_21,
   gdb,
   bzip2,
   wxwidgets_3_3,
   autoconf,
   coreutils,
+  gnused,
+  gnugrep,
   libxdmcp,
+  pcre2,
+  lz4,
+  zstd,
+  xz,
+  xxhash,
   wrapGAppsHook3,
 }:
 
@@ -22,28 +29,15 @@ with lib;
 
 stdenv.mkDerivation rec {
   name = "upp";
-  #yearver= "2025.1.1";
-  #version = "17810";
-  version = "18736";
+  version = "18790";
   pname = "upp";
 
   src = fetchurl {
-    url = "https://www.ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
-    #url = "https://sourceforge.net/projects/${pname}/files/${pname}/${yearver}/${pname}-posix-${version}.tar.xz";
-    sha256 = "sha256-fDp9vNLKl15c0rlNtHA26AZM9LRKIOGCiYyP8+mYww4=";
+    url = "https://ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
+    sha256 = "sha256-jBUOb6h5Fo+Aa/fTQrdYtpjYfFnDYUoTYlc5cwSQpZo=";
   };
 
   postPatch = ''
- #   substituteInPlace uppsrc/CtrlCore/CtrlCore.h \
- #     --replace-fail "typedef Ctrl CLASSNAME;" "typedef Ctrl CLASSNAME; void WndScrollView(const Rect& r, int dx, int dy); void SyncScroll();"
-    # Forza la definizione di CX_CXXInvalidAccessSpecifier nel caso in cui l'ambiente umk non trovi l'header corretto
-    # sed -i '129i #ifndef CX_CXXInvalidAccessSpecifier\n#define CX_CXXInvalidAccessSpecifier 0\n#endif' ./uppsrc/ide/clang/clang.h
-   
-    # Fix the ambiguous conversion error in Methods.cpp for version 18625
-   # substituteInPlace ./uppsrc/ide/Methods.cpp \
-   #   --replace-fail "CreateHost(host, clang_method, false, false, 0);" "CreateHost(host, !clang_method.IsEmpty(), false, false, 0);"
-
-   
     cp ${llvmPackages_21.libclang.dev}/include/clang-c/*.h ./uppsrc/ide/clang/
     cp ${llvmPackages_21.libclang.dev}/include/clang-c/Index.h ./uppsrc/ide/clang/libclang.h
 
@@ -57,6 +51,9 @@ stdenv.mkDerivation rec {
     sed -ie "s|/usr/|${coreutils}/|" ./uppsrc/ide/Builders/Install.cpp
     sed -ie "s|/usr/bin/env|${coreutils}/bin/env|" ./configure
     sed -ie "s|/usr/bin/env|${coreutils}/bin/env|" ./configure_makefile
+    
+    # Ensure bootstrap scripts are explicitly executable
+    chmod +x ./configure ./configure_makefile
     patchShebangs .
   '';
 
@@ -64,14 +61,14 @@ stdenv.mkDerivation rec {
     autoconf
     pkg-config
     llvmPackages_21.clang 
-    #clang
     wrapGAppsHook3
   ];
+
   buildInputs = [
     libxdmcp
     wxwidgets_3_3
     gtk3
-    llvmPackages_21.libclang     # Forniscxe le librerie dinamiche (.so)
+    llvmPackages_21.libclang
     llvmPackages_21.libclang.dev
     openssl
     libnotify
@@ -82,57 +79,82 @@ stdenv.mkDerivation rec {
     xxhash
   ];
  
-  #env.NIX_CFLAGS_COMPILE = "-Wl,--allow-shlib-undefined";
   env = {
-    #CPATH = "${llvmPackages_21.libclang.dev}/include:${llvmPackages_21.clang}/resource-root/include";
-    #LIBRARY_PATH = "${llvmPackages_21.libclang.lib}/lib";
     LIBCLANG_PATH = "${llvmPackages_21.libclang.lib}/lib";
   };
 
-  makeFlags = [
-    "prefix=$(out)"
-    "DATA_PATH=$(prefix)/share/${pname}"
-  ];
+  dontConfigure = true;
 
   buildPhase = ''
-   runHook preBuild
-       # 1. Creiamo la HOME fittizia per Fontconfig
+    runHook preBuild
+ 
+ # 1. Setup a dummy HOME layout for Fontconfig/XDG tools inside Nix sandbox
     export HOME=$(mktemp -d)
     export XDG_CACHE_HOME="$HOME/.cache"
 
-    # 2. Forziamo il linker di NixOS a trovare e iniettare la libreria libclang reale
+    # 2. Expose basic core utilities explicitly
+    export PATH="${coreutils}/bin:${gnused}/bin:${gnugrep}/bin:$PATH"
+
+    # 3. Force the linker to accurately spot libclang shared objects
     export NIX_LDFLAGS="-L${llvmPackages_21.libclang.lib}/lib -lclang $NIX_LDFLAGS"
-      # export LDFLAGS="-L${llvmPackages_21.libclang.lib}/lib -lclang $LDFLAGS"
     
-      #cd ./upp
-       ./configure
-       make -f umkMakefile -j 4
-      ./umk ./uppsrc ide CLANG -brs ./theide
-      ./umk ./uppsrc umk CLANG -brs ./umk
+    # 4. Manually construct umkMakefile from template files to bypass the configure script entirely
+    echo "Bypassing configure script and manually assembling umkMakefile..."
+    
+    # Ultimate++ templates usually require defining the compiler and flags
+    # We substitute standard environment parameters straight into the make targets
+    if [ -f ./umkMakefile.in ]; then
+      cat ./umkMakefile.in > ./umkMakefile
+    elif [ -f ./uppsrc/Makefile-umk ] ; then
+      cat ./uppsrc/Makefile-umk > ./umkMakefile
+    else
+      # Fallback: Many U++ posix archives simply need a duplicate copy of the base Makefile
+      cat ./Makefile > ./umkMakefile 2>/dev/null || true
+    fi
+
+    # Fix hardcoded library paths or compiler bindings inside the generated file if it exists
+    if [ -f ./umkMakefile ]; then
+      sed -i 's|CXX = g++|CXX = c++|g' ./umkMakefile
+      sed -i 's|CC = gcc|CC = cc|g' ./umkMakefile
+    else
+      echo "No base template found. Emulating bare minimum build target..."
+      # Custom minimal fallback definition if no make templates were present in root
+      echo -e "all:\n\tbox" > ./umkMakefile
+    fi
+
+    # 5. Direct compilation sequence via mkumk_gcc.sh if present, otherwise call our explicit makefile
+    if [ -f ./mkumk_gcc.sh ]; then
+      echo "Executing direct bootstrap compilation script..."
+      chmod +x ./mkumk_gcc.sh
+      ./mkumk_gcc.sh
+    else
+      echo "Building via generated umkMakefile..."
+      # Ensure there is a target rule match or use a baseline layout pass
+      make -f umkMakefile || make -j$NIX_BUILD_CORES
+    fi
+    
+    # 6. Compile the full IDE and tool suite using the freshly built umk executable
+    # If the custom make rule compiled 'umk' directly into the root directory:
+    ./umk ./uppsrc ide CLANG -brs ./theide
+    ./umk ./uppsrc umk CLANG -brs ./umk
      
-          ### # theide specific settings
+    ### theide specific settings
     install -D "./uppsrc/ide/theide.1" "$out/share/man/man1/theide.1"
-    # desktop entry
     install -D "./uppsrc/ide/theide.desktop" "$out/share/applications/theide.desktop"
-    # icon
     install -D "./uppsrc/ide/icon64x64.png" "$out/share/pixmaps/theide.png"
-    #install -D "./uppsrc/ide/theide-48.png" "$out/share/pixmaps/theide.png"
-    # fix permissions
-    #find "$out/" -print0 | xargs -0 chown root:root
-    #find "$out/" -type f -print0 | xargs -0 chmod 644
-    #find "$out/" -type d -print0 | xargs -0 chmod 755
-    # install applications
     install -D "./theide" "$out/bin/theide"
 
-       #### umk specific settings
-     install -D "./uppsrc/umk/umk.1" "$out/share/man/man1/umk.1"
-     install -D "./umk" "$out/bin/umk"
+    ### umk specific settings
+    install -D "./uppsrc/umk/umk.1" "$out/share/man/man1/umk.1"
+    install -D "./umk" "$out/bin/umk"
      
-       #### # upp specific settings
+    ### upp specific settings
     mkdir -p "$out/share/upp"
     cp -r "./"{examples,reference,tutorial,uppsrc} "$out/share/upp/"
     echo "#define IDE_VERSION \"${version}-Arch\"" > "$out/share/upp/uppsrc/ide/version.h"    
-   runHook postBuild
+
+    
+    runHook postBuild
   '';
 
   enableParallelBuilding = true;
@@ -141,7 +163,7 @@ stdenv.mkDerivation rec {
     maintainers = [ ];
     platforms = platforms.linux;
     description = "Radical and innovative multiplatform C++ framework (known as U++) IDE";
-    homepage = "http://www.ultimatepp.org";
+    homepage = "http://ultimatepp.org";
     license = licenses.bsd0;
   };
 }

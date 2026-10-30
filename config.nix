@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    gitnuro = callPackage ./applications/version-management/gitnuro { };
     convey = callPackage ./applications/networking/convey { };
     vish = callPackage ./applications/editors/vish { };
     assaultcube-reloaded = callPackage ./games/assaultcube-reloaded { };

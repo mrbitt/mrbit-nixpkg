@@ -10,7 +10,7 @@
 , ninja
 , appstream
 , pkg-config
-, wrapGAppsHook
+, wrapGAppsHook3
 , unstableGitUpdater
 , gettext
 }:
@@ -33,7 +33,7 @@ stdenv.mkDerivation {
     cmake
     ninja
     pkg-config
-    wrapGAppsHook
+    wrapGAppsHook3
     gettext
   ];
 

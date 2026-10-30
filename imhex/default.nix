@@ -1,41 +1,44 @@
-{ lib
-, stdenv
-, cmake
-, llvm
-, fetchFromGitHub
-, mbedtls
-, gtk3
-, pkg-config
-, capstone
-, dbus
-, libGLU
-, libGL
-, glfw3
-, file
-, perl
-, python3
-, jansson
-, curl
-, fmt_8
-, nlohmann_json
-, yara
-, rsync
-, autoPatchelfHook
+{
+  lib,
+  stdenv,
+  cmake,
+  llvm,
+  fetchFromGitHub,
+  mbedtls,
+  gtk3,
+  pkg-config,
+  capstone,
+  dbus,
+  libGLU,
+  libGL,
+  glfw3,
+  file,
+  perl,
+  python3,
+  jansson,
+  curl,
+  fmt_11,
+  nlohmann_json,
+  yara,
+  nix-update-script,
+  autoPatchelfHook,
+  makeWrapper,
 }:
 
 let
-  version = "1.35.4";
-  patterns_version = "1.35.4";
+  version = "1.38.1";
+  patterns_version = "1.38.1";
 
   patterns_src = fetchFromGitHub {
+    name = "ImHex-Patterns-source-${patterns_version}";
     owner = "WerWolv";
     repo = "ImHex-Patterns";
-    rev = "ImHex-v${patterns_version}";
-    hash = "sha256-7ch2KXkbkdRAvo3HyErWcth3kG4bzYvp9I5GZSsb/BQ=";
+    tag = "ImHex-v${patterns_version}";
+    hash = "sha256-MqQHzR5lKWhQI6pIX1kbAPDVG18UrMJM45mtIe/ggJE=";
   };
 
 in
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "imhex";
   inherit version;
 
@@ -43,58 +46,103 @@ stdenv.mkDerivation rec {
     name = "ImHex-source-${version}";
     fetchSubmodules = true;
     owner = "WerWolv";
-    repo = pname;
-    rev = "refs/tags/v${version}";
-    hash = "sha256-6QpmFkSMQpGlEzo7BHZn20c+q8CTDUB4yO87wMU5JT4";
+    repo = "ImHex";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-lkpFiXuEF72nBkPuInv683Ct1Uu+uZ0PGejI9cVEUp0=";
   };
 
-  #patches = [./0002-fix-main-Handle-different-LLVM-version.patch];
+  strictDeps = true;
 
-  nativeBuildInputs = [ autoPatchelfHook cmake llvm python3 perl pkg-config rsync ];
+  nativeBuildInputs = [
+    cmake
+    llvm
+    python3
+    perl
+    pkg-config
+    makeWrapper
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
 
   buildInputs = [
     capstone
     curl
     dbus
     file
-    fmt_8
+    fmt_11
     glfw3
     gtk3
     jansson
     libGLU
-    libGL
     mbedtls
     nlohmann_json
     yara
+    llvm
   ];
 
-  autoPatchelfIgnoreMissingDeps = [ "*.hexpluglib" ];
-  appendRunpaths = [
+  # autoPatchelfHook only searches for *.so and *.so.*, and won't find *.hexpluglib
+  # however, we will append to RUNPATH ourselves
+  autoPatchelfIgnoreMissingDeps = lib.optionals stdenv.hostPlatform.isLinux [ "*.hexpluglib" ];
+  appendRunpaths = lib.optionals stdenv.hostPlatform.isLinux [
     (lib.makeLibraryPath [ libGL ])
     "${placeholder "out"}/lib/imhex/plugins"
   ];
 
   cmakeFlags = [
-    "-DIMHEX_OFFLINE_BUILD=ON"
-    "-DUSE_SYSTEM_CAPSTONE=ON"
-    "-DUSE_SYSTEM_CURL=ON"
-    "-DUSE_SYSTEM_FMT=ON"
-    "-DUSE_SYSTEM_LLVM=ON"
-    "-DUSE_SYSTEM_NLOHMANN_JSON=ON"
-    "-DUSE_SYSTEM_YARA=ON"
+    (lib.cmakeBool "IMHEX_OFFLINE_BUILD" true)
+    (lib.cmakeBool "IMHEX_COMPRESS_DEBUG_INFO" false) # avoids error: cannot compress debug sections (zstd not enabled)
+    (lib.cmakeBool "IMHEX_GENERATE_PACKAGE" stdenv.hostPlatform.isDarwin)
+    (lib.cmakeBool "USE_SYSTEM_CAPSTONE" true)
+    (lib.cmakeBool "USE_SYSTEM_CURL" true)
+    (lib.cmakeBool "USE_SYSTEM_FMT" true)
+    (lib.cmakeBool "USE_SYSTEM_LLVM" true)
+    (lib.cmakeBool "USE_SYSTEM_NLOHMANN_JSON" true)
+    (lib.cmakeBool "USE_SYSTEM_YARA" true)
+    (lib.cmakeFeature "CMAKE_POLICY_VERSION_MINIMUM" "3.5")
   ];
 
-  # rsync is used here so we can not copy the _schema.json files
-  postInstall = ''
-    mkdir -p $out/share/imhex
-    rsync -av --exclude="*_schema.json" ${patterns_src}/{constants,encodings,includes,nodes,magic,patterns} $out/share/imhex
+  env.NIX_CFLAGS_COMPILE = "-Wno-error=deprecated-declarations";
+
+  # Comment out fixup_bundle in PostprocessBundle.cmake as we are not building a standalone application
+  postPatch = ''
+    # Link patterns source into location expected by cmake when IMHEX_OFFLINE_BUILD is set
+    ln -s ${patterns_src} ImHex-Patterns
+  ''
+  + lib.optionalString stdenv.hostPlatform.isDarwin ''
+    substituteInPlace cmake/modules/PostprocessBundle.cmake \
+      --replace-fail "fixup_bundle" "#fixup_bundle"
   '';
 
-  meta = with lib; {
+  postInstall =
+    if stdenv.hostPlatform.isLinux then
+      ''
+        # without this imhex is not able to find pattern files
+        wrapProgram $out/bin/imhex --prefix XDG_DATA_DIRS : $out/share
+      ''
+    else if stdenv.hostPlatform.isDarwin then
+      ''
+        mkdir -p $out/Applications
+        mv $out/imhex.app $out/Applications
+        install_name_tool \
+          -change "$out/lib/libimhex.${finalAttrs.version}${stdenv.hostPlatform.extensions.sharedLibrary}" \
+          "@executable_path/../Frameworks/libimhex.${finalAttrs.version}${stdenv.hostPlatform.extensions.sharedLibrary}" \
+          "$out/Applications/imhex.app/Contents/MacOS/imhex"
+        makeWrapper "$out/Applications/imhex.app/Contents/MacOS/imhex" "$out/bin/imhex"
+      ''
+    else
+      throw "Unsupported system";
+
+  passthru.updateScript = nix-update-script { };
+
+  meta = {
     description = "Hex Editor for Reverse Engineers, Programmers and people who value their retinas when working at 3 AM";
-    homepage = "https://github.com/WerWolv/ImHex" "https://github.com/WerWolv/ImHex-Patterns";
-    license = with licenses; [ gpl2Only ];
-    maintainers = with maintainers; [ luis kashw2 cafkafk ];
-    platforms = platforms.linux;
+    homepage = "https://github.com/WerWolv/ImHex";
+    license = with lib.licenses; [ gpl2Only ];
+    maintainers = with lib.maintainers; [
+      kashw2
+      cafkafk
+      govanify
+      ryand56
+    ];
+    platforms = with lib.platforms; linux ++ darwin;
   };
-}
+})
