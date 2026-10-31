@@ -18,7 +18,7 @@
     goatattack = callPackage ./games/goatattack { };
     frozen-bubble = callPackage ./games/frozen-bubble { };
     impression = callPackage ./applications/misc/impression { };
-    balena-etcher = callPackage ./tools/system/balen-etcher { };
+    etcher = callPackage ./tools/system/balen-etcher { };
     gitfiend = callPackage ./applications/version-management/gitfiend { };
     gitte = callPackage ./applications/version-management/gitte { };
     letters = callPackage ./applications/editors/letters { };
