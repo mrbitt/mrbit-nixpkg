@@ -1,80 +1,169 @@
-{ lib
-, stdenv
-, fetchFromGitHub
-, qtbase
-, qttools
-, cmake
-, wrapQtAppsHook
-, gtk3
-, pkg-config
-, dmidecode
-, fwupd
-, iperf3
-, lm_sensors
-, lsscsi
-, mesa-demos ,pciutils ,sysbench ,udisks2 ,usbutils ,vulkan-tools ,xdg-utils ,xorg
-, libsoup_3
-, json-glib
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+
+  cmake,
+  glslang,
+  pkg-config,
+  libsForQt5,
+  makeWrapper,
+  wrapGAppsHook4,
+
+  cups,
+  gtk3,
+  json-glib,
+  lerc,
+  libdatrie,
+  libdecor,
+  libepoxy,
+  libnghttp2,
+  libpsl,
+  libselinux,
+  libsepol,
+  libsoup_3,
+  libsysprof-capture,
+  libthai,
+  libxkbcommon,
+  libxdmcp,
+  libxtst,
+  pcre2,
+  sqlite,
+  util-linux,
+  vulkan-headers,
+  wayland,
+
+  # runtime
+  dmidecode,
+  gawk,
+  iperf,
+  mesa-demos,
+  sysbench,
+  udisks,
+  vulkan-tools,
+  xdg-utils,
+  xrandr,
+
+  nix-update-script,
+
+  printingSupport ? true,
 }:
-let
-  tools = {
-    dmidecode = lib.getExe' dmidecode "dmidecode";
-    vulkaninfo = lib.getExe' vulkan-tools "vulkaninfo";
-  };
-in
-stdenv.mkDerivation rec {
+
+stdenv.mkDerivation (finalAttrs: {
   pname = "hardinfo2";
-  version = "2.1.17";
+  version = "2.3.1";
 
   src = fetchFromGitHub {
     owner = "hardinfo2";
     repo = "hardinfo2";
-    rev = "release-${version}";
-    hash = "sha256-qdJ2l1Cx/czQFIjJXY6UlxaI07dqJWyW9Avldql0V4o=";
-    fetchSubmodules = true;
+    tag = "release-${finalAttrs.version}";
+    hash = "sha256-rrb7iwR5kd7kJSncbE+yzdG55L7IaF7919kLsl/A5pY=";
   };
 
-  postPatch = ''
-    substituteInPlace CMakeLists.txt --replace gio-2.0 gio-unix-2.0
-  '';
-
-
- cmakeFlags = [
-    "-DCMAKE_INSTALL_PREFIX=$out"
-    "-DCMAKE_INSTALL_FULL_SYSCONDIR=$out/etc"
-    "-DCMAKE_INSTALL_SYSCONFDIR=$out/etc"
-    "-DSYSTEMD_DIR=$out/lib/systemd/system"
+  patches = [
+    ./remove-update.patch
+    ./default-no-theme.patch
   ];
 
+  # fix absolute path for xdg-open
+  postPatch = ''
+    substituteInPlace deps/sysobj_early/gui/uri_handler.c \
+      --replace-fail /usr/bin/xdg-open "${lib.getExe' xdg-utils "xdg-open"}"
+  '';
 
   nativeBuildInputs = [
-    qtbase qttools wrapQtAppsHook gtk3 pkg-config
+    cmake
+    pkg-config
+
+    glslang
+
+    wrapGAppsHook4
+    libsForQt5.wrapQtAppsHook
+    makeWrapper
   ];
 
   buildInputs = [
-    cmake
-    libsoup_3 json-glib vulkan-tools dmidecode
+    gtk3
+    json-glib
+    lerc
+    libdatrie
+    libdecor
+    libepoxy
+    libnghttp2
+    libpsl
+    libselinux
+    libsepol
+    libsoup_3
+    libsysprof-capture
+    libthai
+    libxkbcommon
+    pcre2
+    sqlite
+    util-linux
+    libxdmcp
+    libxtst
+    vulkan-headers
+    wayland
   ];
 
-  postConfigure = ''
-    substituteInPlace cmake_install.cmake \
-      --replace "/var/empty" "${placeholder "out"}" \
-      --replace "/usr" "${placeholder "out"}"
+  hardeningDisable = [ "fortify" ];
+
+  cmakeFlags = [
+    (lib.cmakeFeature "CMAKE_INSTALL_DATAROOTDIR" "${placeholder "out"}/share")
+    (lib.cmakeFeature "CMAKE_INSTALL_SERVICEDIR" "${placeholder "out"}/lib")
+  ];
+
+  dontWrapQtApps = true;
+  preFixup = ''
+    makeWrapperArgs+=("''${qtWrapperArgs[@]}")
   '';
 
-  runtimeDeps = [ dmidecode mesa-demos vulkan-tools ];
-  binPath = lib.makeBinPath runtimeDeps;
+  runtimeDeps = [
+    # system stats
+    dmidecode
+    mesa-demos # glxinfo + vkgears for benchmark
 
+    # display info
+    vulkan-tools # vulkaninfo
+    xrandr
 
- #  PKG_CONFIG_SYSTEMD_SYSTEMDSYSTEMUNITDIR = "${placeholder "out"}/lib/systemd/system";
- # NIX_LDFLAGS = "-lgio-2.0";
+    # additional tooling for benchmarks
+    # https://github.com/hardinfo2/hardinfo2/blob/release-2.2.13/shell/shell.c#L641-L652
+    gawk
+    iperf
+    sysbench
+    udisks
+  ];
 
-  meta = with lib; {
-    description = "System Information and Benchmark for Linux Systems";
-    homepage = "https://github.com/hardinfo2/hardinfo2/archive/refs/tags/release-2.1.17.tar.gz";
-    license = licenses.unfree; # FIXME: nix-init did not found a license
-    maintainers = with maintainers; [ ];
+  runtimeLibs = lib.optionals printingSupport [ cups ];
+
+  postFixup = ''
+    wrapProgram $out/bin/hardinfo2 \
+      --prefix PATH : ${lib.makeBinPath finalAttrs.runtimeDeps} \
+      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath finalAttrs.runtimeLibs}
+
+      substituteInPlace $out/lib/systemd/system/hardinfo2.service \
+        --replace-fail "ExecStart=/usr/bin/hwinfo2_fetch_sysdata" "ExecStart=$out/bin/hwinfo2_fetch_sysdata"
+  '';
+
+  # account for tags having a release- prefix
+  passthru.updateScript = nix-update-script { extraArgs = [ "--version-regex=release-(.*)" ]; };
+
+  meta = {
+    description = "System information and benchmarks for Linux systems";
+    homepage = "http://www.hardinfo2.org/";
+    downloadPage = "https://github.com/hardinfo2/hardinfo2/";
+    changelog = "https://github.com/hardinfo2/hardinfo2/releases/tag/release-${finalAttrs.version}";
+    license = with lib.licenses; [
+      gpl2Plus
+      gpl3Plus
+      lgpl2Plus
+    ];
+    maintainers = with lib.maintainers; [
+      sigmanificient
+      jk
+    ];
+    platforms = lib.platforms.linux;
     mainProgram = "hardinfo2";
-    platforms = platforms.all;
   };
-}
+})

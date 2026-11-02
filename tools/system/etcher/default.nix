@@ -12,11 +12,11 @@
 
 stdenv.mkDerivation rec {
   pname = "balena-etcher";
-  version = "2.1.7";
+  version = "2.1.9";
 
   src = fetchurl {
     url = "https://github.com/balena-io/etcher/releases/download/v${version}/${pname}_${version}_amd64.deb";
-    hash = "sha256-nb6mFl3e4ewfG3o4/pLw0sVMYhdxBDinr2dSwmfRk5U="; # Sostituisci con l'hash reale
+    hash = "sha256-fg0OCYbl0PPZwDpMAAT5iRI1FQ4NqZ+gvDMtjAPxpMA="; # Sostituisci con l'hash reale
   };
 
   nativeBuildInputs = [ dpkg makeWrapper ];

@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    hardinfo2 = callPackage ./tools/system/hardinfo2 { };
     gitnuro = callPackage ./applications/version-management/gitnuro { };
     convey = callPackage ./applications/networking/convey { };
     vish = callPackage ./applications/editors/vish { };
