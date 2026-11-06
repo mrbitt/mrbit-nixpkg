@@ -11,13 +11,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "gitnuro";
-  version = "2.0.0";
+  version = "2.1.0";
 
   src = fetchurl (
     if stdenv.hostPlatform.system == "x86_64-linux" then
       {        
-        url = "https://github.com/JetpackDuba/Gitnuro/releases/download/${finalAttrs.version}/Gitnuro-linux-x86_64-2.0-${finalAttrs.version}.jar";
-        hash = "sha256-7AaIHJT++xW9YSDoNUmx4YsOS7uqxTAQs4QJtLfubvg=";
+        url = "https://github.com/JetpackDuba/Gitnuro/releases/download/${finalAttrs.version}/Gitnuro-linux-x86_64-2.1-${finalAttrs.version}.jar";
+        hash = "sha256-4NpKKrGvj9W6eMXsAXJYMoIJ5vvcBilwtNM5S+Ajfuc=";
       }
     else if stdenv.hostPlatform.system == "aarch64-linux" then
       {
