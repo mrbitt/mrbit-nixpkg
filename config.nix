@@ -8,6 +8,7 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    waveterm = callPackage ./tools/system/waveterm { };
     hardinfo2 = callPackage ./tools/system/hardinfo2 { };
     gitnuro = callPackage ./applications/version-management/gitnuro { };
     convey = callPackage ./applications/networking/convey { };

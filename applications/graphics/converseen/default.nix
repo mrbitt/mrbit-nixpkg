@@ -25,11 +25,11 @@ in
 
 stdenv.mkDerivation rec {
   pname = "converseen";
-  version = "0.15.2.7";
+  version = "0.15.2.9";
 
   src = fetchurl {
     url = "https://sourceforge.net/projects/converseen/files/Converseen/Converseen%200.15/${pname}-${version}.tar.bz2";
-    hash = "sha256-Lbpey8iW+QqZfRJQTbJUC+kMNsSanKRi+5yEoU+zaOk=";
+    hash = "sha256-gHQr9GcyhDbJLTvcnOR6jIl+ev1QFlGJmvNLBXm5ac8=";
   };
 
   #doCheck = false;

@@ -15,6 +15,7 @@
   autoconf,
   coreutils,
   gnused,
+  giflib,
   gnugrep,
   libxdmcp,
   pcre2,
@@ -29,12 +30,12 @@ with lib;
 
 stdenv.mkDerivation rec {
   name = "upp";
-  version = "18790";
+  version = "18801";
   pname = "upp";
 
   src = fetchurl {
     url = "https://ultimatepp.org/downloads/${pname}-posix-${version}.tar.xz";
-    sha256 = "sha256-pmG5OsEtb3f1AMMBP2bEqtLaX8R/ZlReZMK87jQ2L9k=";
+    sha256 = "sha256-+nXs3UkCFlaGjPpHVDs2TpTU/laMgXgrh59iHYyot18=";
   };
 
   postPatch = ''
@@ -68,6 +69,7 @@ stdenv.mkDerivation rec {
     libxdmcp
     wxwidgets_3_3
     gtk3
+    giflib
     llvmPackages_21.libclang
     llvmPackages_21.libclang.dev
     openssl

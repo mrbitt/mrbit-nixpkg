@@ -6,7 +6,7 @@ stdenv.mkDerivation rec {
    
   src = fetchurl {
     
-    url ="https://github.com/corporateshark/WCMCommander/archive/refs/tags/release-${version}.zip";
+    url ="https://github.com/sagpant/WCMCommander/archive/refs/tags/release-${version}.zip";
     sha256 = "Pj4S29my6YvdbP2fnwiJwrc94KPysUFicmGcDt2UuuA=";
   };
  
@@ -24,7 +24,25 @@ stdenv.mkDerivation rec {
     substituteInPlace install-files/share/wcm/styles/solarize.sh --replace "/usr" $out
     substituteInPlace install-files/share/wcm/styles/solarize.sh --replace '#!/bin/bash' '#!${bash}/bin/bash'
     substituteInPlace src/libtester/libconf.* --replace "/usr" $out
-    '';
+    substituteInPlace src/vfs/vfs-sftp2.cpp --replace-warn "char *errmsg;" "const char *errmsg;"
+    
+     # Fix modern CMake policy requirement
+    sed -i 's/CMAKE_MINIMUM_REQUIRED(VERSION [2-3]\.[0-9]/CMAKE_MINIMUM_REQUIRED(VERSION 3.5/' CMakeLists.txt
+
+    # Replace potential broken legacy macro/string constructors in sftp
+    sed -i 's/std::string(\s*0\s*,\s*0\s*)/std::string()/g' src/vfs/vfs-sftp2.cpp
+    sed -i 's/std::string\s*a\s*(\s*0\s*,\s*0\s*)/std::string a/g' src/vfs/vfs-sftp2.cpp
+     # Risolve l'incompatibilità del tipo del costruttore std::string (unsigned char* const)
+    substituteInPlace src/vfs/vfs-sftp2.cpp --replace-warn "unsigned char" "char"
+  '';
+
+    # Flag per declassare gli errori di conversione dei puntatori rigidi di libssh2 in semplici warning
+  NIX_CFLAGS_COMPILE = "-std=c++14 -fpermissive";
+
+   cmakeFlags = [
+    "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+     "-DWITH_SFTP=OFF"
+  ];
 
  nativeBuildInputs = [ unzip cmake];
 
