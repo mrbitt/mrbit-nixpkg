@@ -3,11 +3,14 @@
 , fetchurl 
 , copyDesktopItems
 , makeDesktopItem
-, libX11, libxcb, wayland
+, autoPatchelfHook
+, libX11
+, libxcb
+, wayland
 , freetype
 , hicolor-icon-theme
 , libbsd
-, libsForQt5
+, glib
 , qt5
 , runtimeShell
 }:
@@ -22,43 +25,84 @@ stdenv.mkDerivation rec {
 
   dontConfigure = true;
   dontBuild = true;
+  
+  # DISABILITA IL WRAPPER AUTOMATICO QT: Evita il blocco d'errore nel ciclo qtPreHook
+  dontWrapQtApps = true;
 
-nativeBuildInputs = [ copyDesktopItems ];
+  nativeBuildInputs = [ copyDesktopItems autoPatchelfHook ];
 
-installPhase = ''
- 
-    mkdir -p $out/bin $out/share/applications $out/share/icons/hicolor/scalable $out/share/poweriso-gui
-    cp -r ./* $out/share/poweriso-gui/
+  buildInputs = [ 
+    libX11 
+    libxcb 
+    wayland 
+    freetype 
+    libbsd 
+    glib
+    qt5.qtbase 
+  ];
+
+  installPhase = ''
+     mkdir -p $out/bin $out/share/applications $out/share/icons/hicolor/scalable $out/share/poweriso-gui
+    
+    # Move files safely into the target build environment
+    if [ -d "poweriso-x64" ]; then
+      cp -r poweriso-x64/* $out/share/poweriso-gui/
+    else
+      cp -r ./* $out/share/poweriso-gui/
+    fi
+    
     rm -f "$out/share/poweriso-gui/poweriso.sh"
-    install -Dm644 "${./poweriso-gui.svg}" "$out/share/icons/hicolor/scalable/poweriso-gui.svg"    
-        cat >> $out/bin/poweriso-gui << EOF
-         #!${runtimeShell}
-         export LD_LIBRARY_PATH="$out/share/poweriso-gui:\$LD_LIBRARY_PATH"
-         export QT_QPA_PLATFORM=wayland
-         export QT_QPA_PLATFORM_PLUGIN_PATH="$out/share/poweriso-gui"
-         cd $out/share/poweriso-gui
-         exec $out/share/poweriso-gui/poweriso "\$@"
-         unset LD_LIBRARY_PATH
-  EOF
-         chmod +x $out/bin/poweriso-gui
-      '';
+    
+    # AGGRESSIVE PURGE: Automatically search and destroy ANY bundled library 
+    # that is part of the standard glibc core stack to isolate the binary.
+    find $out/share/poweriso-gui/ -type f \( \
+      -name "ld-linux*" -o \
+      -name "libc.so*" -o \
+      -name "libpthread*" -o \
+      -name "libm.so*" -o \
+      -name "libdl.so*" -o \
+      -name "librt.so*" -o \
+      -name "libresolv.so*" -o \
+      -name "libutil.so*" -o \
+      -name "libgcc_s.so*" -o \
+      -name "libstdc++.so*" \
+    \) -delete
 
- desktopItems = [ (makeDesktopItem {
+    if [ -f "${./poweriso-gui.svg}" ]; then
+      install -Dm644 "${./poweriso-gui.svg}" "$out/share/icons/hicolor/scalable/poweriso-gui.svg"
+    fi
+
+    # Generate the wrapper shell binding mapping to Xwayland
+    cat >> $out/bin/poweriso-gui << EOF
+#!${runtimeShell}
+export LD_LIBRARY_PATH="$out/share/poweriso-gui:\$LD_LIBRARY_PATH"
+export QT_QPA_PLATFORM=xcb
+export QT_QPA_PLATFORM_PLUGIN_PATH="$out/share/poweriso-gui"
+
+# SUPPRESS WAYLAND WARNING: Unset this variable for PowerISO so Qt doesn't print the warning
+unset XDG_SESSION_TYPE
+
+cd $out/share/poweriso-gui
+exec $out/share/poweriso-gui/poweriso "\$@"
+EOF
+
+    chmod +x $out/bin/poweriso-gui
+  '';
+
+  desktopItems = [ (makeDesktopItem {
     name = "${pname}-gui";
     exec = "${pname}-gui";
-    icon = "${pname}-gui.svg";
-    desktopName = "${pname}-gui";
-    comment     = meta.description;
+    # CORREZIONE SPECIFICA ICONA: Rimosso ".svg" per assecondare la Icon Theme Specification
+    icon = "poweriso-gui";
+    desktopName = "PowerISO GUI";
+    comment     = "Create, extract, edit and convert disc images";
     categories  = [ "System" ];
   }) ];
 
- meta = with lib; {
-    description = "free GUI program which runs on Linux";
-    homepage    = "http://www.poweriso.com/download-poweriso-for-linux.htm";
-    platforms   = platforms.all;
-    license     = with licenses; [ gpl2Plus
-      bsd2 # tix
-      gpl2 # patches from portage
-    ];
+  meta = with lib; {
+    description = "Graphical program to create, extract, edit, and convert disk image files";
+    homepage    = "http://poweriso.com";
+    platforms   = [ "x86_64-linux" ];
+    license     = licenses.unfree;
   };
 }

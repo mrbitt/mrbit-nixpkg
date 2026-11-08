@@ -8,6 +8,9 @@
       (stdenv.lib.optionals stdenv.isLinux linuxPaths) ;
     };
     
+    mucommander = callPackage ./applications/misc/mucommander { };
+    luckybackup = callPackage ./applications/backup/luckybackup { };
+    poweriso = callPackage ./tools/system/poweriso { };
     waveterm = callPackage ./tools/system/waveterm { };
     hardinfo2 = callPackage ./tools/system/hardinfo2 { };
     gitnuro = callPackage ./applications/version-management/gitnuro { };
